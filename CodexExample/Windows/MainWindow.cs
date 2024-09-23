@@ -43,11 +43,11 @@ public class MainWindow : Window, IDisposable
         ImGui.Spacing();
 
         ImGui.Text("Have an icon:");
-        var goatImage = Plugin.TextureProvider.GetFromFile(IconImagePath).GetWrapOrDefault();
-        if (goatImage != null)
+        var iconImage = Plugin.TextureProvider.GetFromFile(IconImagePath).GetWrapOrDefault();
+        if (iconImage != null)
         {
             ImGuiHelpers.ScaledIndent(55f);
-            ImGui.Image(goatImage.ImGuiHandle, new Vector2(goatImage.Width, goatImage.Height));
+            ImGui.Image(iconImage.ImGuiHandle, new Vector2(iconImage.Width, iconImage.Height));
             ImGuiHelpers.ScaledIndent(-55f);
         }
         else
