@@ -1,0 +1,12 @@
+{
+  "Author": "Aimsucks",
+  "Name": "Codex Example",
+  "Punchline": "Providing an example of interacting with a repository of presets for FFXIV plugins.",
+  "Description": "This plugin is designed to be an example of an interface that takes advantage of the Codex API for FFXIV plugin presets.\n\nUse /codex to learn how it works.",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "codex",
+    "api",
+    "presets"
+  ]
+}
