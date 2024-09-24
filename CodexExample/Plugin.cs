@@ -27,8 +27,7 @@ public sealed class Plugin : IDalamudPlugin
     public Plugin()
     {
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-
-        // you might normally want to embed resources and load them from the manifest stream
+        
         var iconImagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "icon.png");
 
         ConfigWindow = new ConfigWindow(this);
@@ -43,12 +42,7 @@ public sealed class Plugin : IDalamudPlugin
         });
 
         PluginInterface.UiBuilder.Draw += DrawUI;
-
-        // This adds a button to the plugin installer entry of this plugin which allows
-        // to toggle the display status of the configuration ui
-        PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
-
-        // Adds another button that is doing the same but for the main ui of the plugin
+        
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
     }
 
@@ -69,7 +63,6 @@ public sealed class Plugin : IDalamudPlugin
     }
 
     private void DrawUI() => WindowSystem.Draw();
-
-    public void ToggleConfigUI() => ConfigWindow.Toggle();
+    
     public void ToggleMainUI() => MainWindow.Toggle();
 }
