@@ -1,6 +1,6 @@
 namespace CodexExample.Helpers;
 
-public static class ResetPluginConfig
+public static class PluginConfig
 {
     public static void Reset()
     {
