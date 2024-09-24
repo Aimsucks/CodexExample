@@ -10,7 +10,7 @@ public static class InstalledPresetsWindow
         
         if (ImGui.Button("Reset Config"))
         {
-            ResetPluginConfig.Reset();
+            PluginConfig.Reset();
         }
     }
 }

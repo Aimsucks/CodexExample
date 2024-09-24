@@ -26,7 +26,7 @@ public class MainWindow : Window, IDisposable
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(450, 300),
+            MinimumSize = new Vector2(450, 500),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
@@ -46,9 +46,7 @@ public class MainWindow : Window, IDisposable
         
         if (ImGui.BeginTable("##headerTable", 2))
         {
-            ImGui.TableSetupColumn("one",
-                                   ImGuiTableColumnFlags.WidthFixed,
-                                   IconWidth + HeaderPadding);
+            ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, IconWidth + HeaderPadding);
             ImGui.TableNextRow();
             
             // Icon column
