@@ -8,6 +8,8 @@ namespace CodexExample.Windows;
 public class MainWindow : Window, IDisposable
 {
     private readonly string IconImagePath;
+    
+    // ReSharper disable once NotAccessedField.Local
     private readonly Plugin Plugin;
     
     private readonly int IconWidth = 100;
