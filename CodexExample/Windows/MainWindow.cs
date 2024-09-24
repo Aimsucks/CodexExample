@@ -76,5 +76,27 @@ public class MainWindow : Window, IDisposable
         
         ImGui.Separator();
 
+        // Body
+        ImGui.BeginTabBar("##tabBar", ImGuiTabBarFlags.NoTooltip);
+
+        // Set tab width to half of the window so they scale appropriately
+        float windowWidth = ImGui.GetWindowWidth();
+        
+        ImGui.SetNextItemWidth(windowWidth / 2);
+        if (ImGui.BeginTabItem("Installed Presets"))
+        {
+            // Call a separate class's Draw() function to move code out of this class
+            InstalledPresetsWindow.Draw();
+            ImGui.EndTabItem();
+        }
+
+        ImGui.SetNextItemWidth(windowWidth / 2);
+        if (ImGui.BeginTabItem("Browse Presets"))
+        {
+            BrowsePresetsWindow.Draw();
+            ImGui.EndTabItem();
+        }
+        
+        ImGui.EndTabBar();
     }
 }
