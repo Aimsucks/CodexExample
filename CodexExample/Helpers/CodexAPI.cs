@@ -11,7 +11,8 @@ public static class CodexAPI
     public static CodexPlugin? Presets;
     
     private const string BaseUrl = "http://localhost:3000/api/plugins/";
-    private const string PluginName = "pluginOne";
+    private const string PluginName = "Codex Example";
+    private static readonly string EscapedPluginName = Uri.EscapeDataString(PluginName);
 
     // Reusable HTTP client
     private static readonly HttpClient HttpClient = new();
@@ -20,7 +21,8 @@ public static class CodexAPI
     {
         try
         {
-            var response = await HttpClient.GetAsync(BaseUrl + PluginName);
+            Plugin.PluginLog.Debug(BaseUrl + EscapedPluginName);
+            var response = await HttpClient.GetAsync(BaseUrl + EscapedPluginName);
             var data = await response.Content.ReadFromJsonAsync<CodexPlugin>();
 
             if (data != null && data.Categories.Count > 0) Presets = data;
@@ -32,15 +34,19 @@ public static class CodexAPI
     }
 }
 
-public abstract class CodexPlugin
+// ReSharper disable once ClassNeverInstantiated.Global
+public class CodexPlugin
 {
     public required int Id { get; set; }
     public required string Name { get; set; }
     public required string Description { get; set; }
-    public abstract required List<CodexCategory> Categories { get; set; }
+    
+    // ReSharper disable once CollectionNeverUpdated.Global
+    public required List<CodexCategory> Categories { get; set; }
 }
 
-public abstract class CodexCategory
+// ReSharper disable once ClassNeverInstantiated.Global
+public class CodexCategory
 {
     public required string Name {get; set;}
     public List<CodexCategory>? Subcategories { get; set; }
@@ -48,7 +54,8 @@ public abstract class CodexCategory
     
 }
 
-public abstract class CodexPreset
+// ReSharper disable once ClassNeverInstantiated.Global
+public class CodexPreset
 {
     public required int Id { get; set; }
     public required string Name { get; set; }
