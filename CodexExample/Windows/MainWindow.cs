@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Interface;
 using Dalamud.Interface.ManagedFontAtlas;
 using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
 using ImGuiNET;
 
 namespace CodexExample.Windows;
@@ -41,14 +39,12 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
-        ImGui.Text($"The random config bool is {Plugin.Configuration.SomePropertyToBeSavedAndWithADefault}");
+        // Header
         ImGui.Separator();
         
-        if (ImGui.BeginTable("headerTable", 2))
+        if (ImGui.BeginTable("##headerTable", 2))
         {
             ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, IconWidth + HeaderPadding);
-            // ImGui.TableSetupColumn("two", ImGuiTableColumnFlags.WidthStretch);
-            
             ImGui.TableNextRow();
             
             // Icon column
@@ -77,24 +73,5 @@ public class MainWindow : Window, IDisposable
         
         ImGui.Separator();
 
-        if (ImGui.Button("Show Settings"))
-        {
-            Plugin.ToggleConfigUI();
-        }
-
-        ImGui.Spacing();
-
-        ImGui.Text("Have an icon:");
-        var iconImage = Plugin.TextureProvider.GetFromFile(IconImagePath).GetWrapOrDefault();
-        if (iconImage != null)
-        {
-            ImGuiHelpers.ScaledIndent(55f);
-            ImGui.Image(iconImage.ImGuiHandle, new Vector2(iconImage.Width, iconImage.Height));
-            ImGuiHelpers.ScaledIndent(-55f);
-        }
-        else
-        {
-            ImGui.Text("Image not found.");
-        }
     }
 }
