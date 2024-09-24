@@ -1,4 +1,6 @@
-﻿using Dalamud.Game.Command;
+﻿global using ImGuiNET;
+
+using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using System.IO;
@@ -37,7 +39,7 @@ public sealed class Plugin : IDalamudPlugin
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Use the /codex command to open the configuration window."
+            HelpMessage = "Open the plugin window."
         });
 
         PluginInterface.UiBuilder.Draw += DrawUI;
