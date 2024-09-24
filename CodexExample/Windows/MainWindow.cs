@@ -2,7 +2,6 @@
 using System.Numerics;
 using Dalamud.Interface.ManagedFontAtlas;
 using Dalamud.Interface.Windowing;
-using ImGuiNET;
 
 namespace CodexExample.Windows;
 
@@ -20,7 +19,8 @@ public class MainWindow : Window, IDisposable
             t => t.AddDalamudDefaultFont(20)));
     
     public MainWindow(Plugin plugin, string iconImagePath)
-        : base("Codex Example##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+        : base("Codex Example", 
+               ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         SizeConstraints = new WindowSizeConstraints
         {
@@ -44,7 +44,9 @@ public class MainWindow : Window, IDisposable
         
         if (ImGui.BeginTable("##headerTable", 2))
         {
-            ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, IconWidth + HeaderPadding);
+            ImGui.TableSetupColumn("one",
+                                   ImGuiTableColumnFlags.WidthFixed,
+                                   IconWidth + HeaderPadding);
             ImGui.TableNextRow();
             
             // Icon column
@@ -66,7 +68,8 @@ public class MainWindow : Window, IDisposable
             } else ImGui.Text("Codex Example");
             
             // Description text
-            ImGui.TextWrapped("Here you will find an example of how a plugin can interact with the Codex plugin preset API. Please review the two tabs below to understand how the plugin functions.");
+            ImGui.TextWrapped("Here you will find an example of how a plugin can interact with the Codex plugin " +
+                              "preset API. Please review the two tabs below to understand how the plugin functions.");
 
             ImGui.EndTable();
         }
