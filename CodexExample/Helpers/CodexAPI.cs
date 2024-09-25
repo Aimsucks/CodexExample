@@ -54,12 +54,11 @@ public class CodexCategory
     
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 public class CodexPreset
 {
     public required int Id { get; set; }
     public required string Name { get; set; }
-    public required string Description { get; set; }
+    public required string? Description { get; set; }
     public required int Version { get; set; }
     public required DateTime UpdatedAt { get; set; }
     public required string Data { get; set; }

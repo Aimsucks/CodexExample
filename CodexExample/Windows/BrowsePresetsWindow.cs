@@ -1,4 +1,7 @@
+using System;
 using CodexExample.Helpers;
+using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Common.Math;
 
 namespace CodexExample.Windows;
@@ -73,13 +76,52 @@ public static class BrowsePresetsWindow
             {
                 foreach (var preset in category.Presets)
                 {
-                    ImGui.BulletText($"{preset.Name}"); 
+                    ImGui.BulletText($"{preset.Name} (v{preset.Version.ToString()})");
                     
+                    // Preset description icon and tooltip
+                    if (preset.Description != null)
+                    {
+                        ImGui.SameLine();
+
+                        // Draw info icon
+                        ImGui.PushFont(UiBuilder.IconFont);
+                        ImGui.TextUnformatted(FontAwesomeIcon.InfoCircle.ToIconString());
+                        ImGui.PopFont();
+
+                        // Handle hovering over icon for tooltip
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+
+                            // Wrap tooltip around 30 characters long
+                            ImGui.PushTextWrapPos(ImGui.GetFontSize() * 30f);
+                            ImGui.Text(preset.Description);
+                            ImGui.PopTextWrapPos();
+
+                            ImGui.EndTooltip();
+                        }
+                    }
+
                     ImGui.SameLine();
                     
-                    if (ImGui.Button("Import"))
+                    // Import button
+                    // ImGui.PushFont(UiBuilder.IconFont);
+                    // ImGui.Text(FontAwesomeIcon.ArrowCircleDown.ToIconString());
+                    // ImGui.PopFont();
+                    //
+                    // if (ImGui.IsItemHovered())
+                    // {
+                    //     
+                    // }
+                    //
+                    // if (ImGui.IsItemClicked())
+                    // {
+                    //     
+                    // }
+                    
+                    if (ImGui.Button($"Import##{preset.Id}"))
                     {
-                        Plugin.PluginLog.Debug("Clicked!");
+                        Plugin.PluginLog.Debug($"Clicked! {preset.Data}");
                     }
                 }
             }
