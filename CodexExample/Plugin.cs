@@ -4,6 +4,7 @@ using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using System.IO;
+using CodexExample.Helpers;
 using CodexExample.Windows;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
@@ -16,16 +17,18 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static ITextureProvider TextureProvider { get; private set; } = null!;
     [PluginService] internal static ICommandManager CommandManager { get; private set; } = null!;
     [PluginService] internal static IPluginLog PluginLog { get; private set; } = null!;
+    internal static Plugin CodexExample { get; private set; } = null!;
 
     private const string CommandName = "/codex";
 
     public Configuration Configuration { get; init; }
-
     public readonly WindowSystem WindowSystem = new("CodexExample");
     private MainWindow MainWindow { get; init; }
 
     public Plugin()
     {
+        CodexExample = this;
+        
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         
         var iconImagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "icon.png");

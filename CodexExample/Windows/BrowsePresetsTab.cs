@@ -28,8 +28,8 @@ public static class BrowsePresetsTab
             ImGui.Spacing();
             
             ImGui.PushStyleColor(ImGuiCol.Text, 0xFF62DDD8);
-            ImGui.TextWrapped("Setting 1: True");
-            ImGui.TextWrapped("Setting 2: 30");
+            ImGui.TextWrapped($"Setting 1: {Configuration.SettingOne}");
+            ImGui.TextWrapped($"Setting 2: {Configuration.SettingTwo}");
             ImGui.PopStyleColor();
 
             // Right column with the presets themselves
@@ -122,6 +122,7 @@ public static class BrowsePresetsTab
                         if (ImGui.IsItemClicked())
                         {
                             Plugin.PluginLog.Debug($"Clicked! {preset.Data}");
+                            Plugin.CodexExample.Configuration.Save();
                         }
                     }
                 }
