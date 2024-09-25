@@ -14,7 +14,7 @@ public class Configuration : IPluginConfiguration
     /*
      * Configuration Presets
      * These are presets that cover the plugin's settings itself. Updating these will immediately update how the
-     *  plugin functions.
+     * plugin functions.
      */
     
     public int Version { get; set; } = 0;
@@ -37,15 +37,15 @@ public class Configuration : IPluginConfiguration
 /*
  * Module Presets
  * The word "module" refers to anything that isn't baked into the actual functionality of the plugin and will add
- *  functionality to it by including it as a preset. A good example of this would be filters in Allagan Tools. The
- *  configurations that are imported are supplementary to the plugin's configuration.
+ * functionality to it by including it as a preset. A good example of this would be filters in Allagan Tools. The
+ * configurations that are imported are supplementary to the plugin's configuration.
  *
  * In these presets, you will need to add a "metadata" object with the following parameters:
  * - An "id" integer to identify the preset in the API
  * - A "version" integer to provide updates to the preset when comparing it to the API version of that preset
  *
  * Anything pre-existing is fine and will be contained in the "data" string attribute of the preset coming from
- *  Codex's API.
+ * Codex's API.
  */
 
 public class PresetMetadata
