@@ -57,16 +57,8 @@ public static class BrowsePresetsTab
             }
             else
             {
-                // A lot of code to make the button and error text centered
-                var originalPos = ImGui.GetCursorPos();
-                var availableSize = ImGui.GetContentRegionAvail();
                 var buttonSize = new Vector2(100, 50);
-            
-                var centerX = (availableSize.X - buttonSize.X) / 2;
-                var centerY = (availableSize.Y - buttonSize.Y) / 2;
-            
-                ImGui.SetCursorPosX(ImGui.GetCursorPosX() + centerX);
-                ImGui.SetCursorPosY(ImGui.GetCursorPosY() + centerY);
+                var originalPos = CenterCursor(buttonSize);
             
                 // Disable button while query is running
                 // Should be fast enough to be unnoticeable unless API is down
@@ -78,10 +70,12 @@ public static class BrowsePresetsTab
                     }
                 }
                 
-                // A lot of code to make the error message centered
-                if (CodexAPI.ErrorMessage.Length > 0)
+                ImGui.SetCursorPos(originalPos);
+                
+                if (PresetsRequest != null && PresetsRequest.IsFaulted)
                 {
-                    ImGui.Text(CodexAPI.ErrorMessage);
+                    _ = CenterCursor("Error querying Codex API!", 50);
+                    ImGui.Text("Error querying Codex API!");
                 }
             
                 // Reset the cursor so the tree of presets draws correctly
@@ -122,10 +116,9 @@ public static class BrowsePresetsTab
                                          .GetBool(ImGui.GetID($"ImportButton##{preset.Id}"), false);
                     
                     using (ImRaii.PushColor(ImGuiCol.Text, 0xFF66AC87, isColored))
+                    using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
-                        ImGui.PushFont(UiBuilder.IconFont);
                         ImGui.Text(FontAwesomeIcon.ArrowCircleDown.ToIconString());
-                        ImGui.PopFont();
                     }
                     
                     ImGui.GetStateStorage()
@@ -156,5 +149,24 @@ public static class BrowsePresetsTab
             
             ImGui.TreePop();
         }
+    }
+
+    private static Vector2 CenterCursor(object input, int verticalPadding = 0)
+    {
+        Vector2 size = new (0,0);
+
+        if (input is Vector2 vec) size = vec;
+        else if (input is string str) size = ImGui.CalcTextSize(str);
+        
+        var originalPos = ImGui.GetCursorPos();
+        var availableSize = ImGui.GetContentRegionAvail();
+            
+        var centerX = (availableSize.X - size.X) / 2f;
+        var centerY = (availableSize.Y - size.Y) / 2f;
+            
+        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + centerX);
+        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + centerY + verticalPadding);
+        
+        return originalPos;
     }
 }
