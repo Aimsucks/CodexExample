@@ -21,7 +21,6 @@ public static class CodexAPI
     {
         try
         {
-            Plugin.PluginLog.Debug(BaseUrl + EscapedPluginName);
             var response = await HttpClient.GetAsync(BaseUrl + EscapedPluginName);
             var data = await response.Content.ReadFromJsonAsync<CodexPlugin>();
 
