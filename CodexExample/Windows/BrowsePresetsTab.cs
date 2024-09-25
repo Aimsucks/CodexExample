@@ -28,8 +28,8 @@ public static class BrowsePresetsTab
             ImGui.Spacing();
             
             ImGui.PushStyleColor(ImGuiCol.Text, 0xFF62DDD8);
-            ImGui.TextWrapped($"Setting 1: {Configuration.SettingOne}");
-            ImGui.TextWrapped($"Setting 2: {Configuration.SettingTwo}");
+            ImGui.TextWrapped($"Setting 1: {Plugin.CodexExample.Configuration.SettingOne}");
+            ImGui.TextWrapped($"Setting 2: {Plugin.CodexExample.Configuration.SettingTwo}");
             ImGui.PopStyleColor();
 
             // Right column with the presets themselves
@@ -105,7 +105,8 @@ public static class BrowsePresetsTab
                     // Import button
                     
                     // Boolean to determine if button should be colored green on hover
-                    var isColored = ImGui.GetStateStorage().GetBool(ImGui.GetID($"ImportButton##{preset.Id}"), false);
+                    var isColored = ImGui.GetStateStorage()
+                                         .GetBool(ImGui.GetID($"ImportButton##{preset.Id}"), false);
                     
                     if(isColored) ImGui.PushStyleColor(ImGuiCol.Text, 0xFF66AC87);
                     ImGui.PushFont(UiBuilder.IconFont);
@@ -113,7 +114,8 @@ public static class BrowsePresetsTab
                     ImGui.PopFont();
                     if(isColored) ImGui.PopStyleColor();
                     
-                    ImGui.GetStateStorage().SetBool(ImGui.GetID($"ImportButton##{preset.Id}"), ImGui.IsItemHovered());
+                    ImGui.GetStateStorage()
+                         .SetBool(ImGui.GetID($"ImportButton##{preset.Id}"), ImGui.IsItemHovered());
                     
                     // Hover and click actions
                     if (ImGui.IsItemHovered())
