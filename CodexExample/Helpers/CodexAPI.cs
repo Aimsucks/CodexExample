@@ -32,6 +32,11 @@ public static class CodexAPI
             Plugin.PluginLog.Error(ex.ToString());
         }
     }
+
+    public static void Dispose()
+    {
+        HttpClient.Dispose();
+    }
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global

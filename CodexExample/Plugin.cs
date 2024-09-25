@@ -49,6 +49,7 @@ public sealed class Plugin : IDalamudPlugin
         WindowSystem.RemoveAllWindows();
         MainWindow.Dispose();
         CommandManager.RemoveHandler(CommandName);
+        CodexAPI.Dispose();
     }
 
     private void OnCommand(string command, string args)
