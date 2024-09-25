@@ -74,6 +74,10 @@ public static class BrowsePresetsTab
             {
                 foreach (var preset in category.Presets)
                 {
+                    // Leaving this here for now as an alternative - creates a "clickable" tree leaf without a bullet
+                    // ImGui.TreeNodeEx($"{preset.Name} (v{preset.Version.ToString()})",
+                    //                  ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.NoTreePushOnOpen);
+                    
                     ImGui.BulletText($"{preset.Name} (v{preset.Version.ToString()})");
                     
                     // Preset description icon and tooltip
