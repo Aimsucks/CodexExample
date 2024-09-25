@@ -6,7 +6,7 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 
 namespace CodexExample.Windows;
 
-public static class BrowsePresetsWindow
+public static class BrowsePresetsTab
 {
     public static void Draw()
     {

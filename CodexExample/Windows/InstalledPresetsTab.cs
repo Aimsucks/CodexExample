@@ -2,7 +2,7 @@ using CodexExample.Helpers;
 
 namespace CodexExample.Windows;
 
-public static class InstalledPresetsWindow
+public static class InstalledPresetsTab
 {
     public static void Draw()
     {
