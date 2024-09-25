@@ -1,7 +1,5 @@
-using System;
 using CodexExample.Helpers;
 using Dalamud.Interface;
-using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Common.Math;
 
 namespace CodexExample.Windows;
