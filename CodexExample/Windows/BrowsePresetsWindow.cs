@@ -105,23 +105,26 @@ public static class BrowsePresetsWindow
                     ImGui.SameLine();
                     
                     // Import button
-                    // ImGui.PushFont(UiBuilder.IconFont);
-                    // ImGui.Text(FontAwesomeIcon.ArrowCircleDown.ToIconString());
-                    // ImGui.PopFont();
-                    //
-                    // if (ImGui.IsItemHovered())
-                    // {
-                    //     
-                    // }
-                    //
-                    // if (ImGui.IsItemClicked())
-                    // {
-                    //     
-                    // }
                     
-                    if (ImGui.Button($"Import##{preset.Id}"))
+                    // Boolean to determine if button should be colored green on hover
+                    var isColored = ImGui.GetStateStorage().GetBool(ImGui.GetID($"ImportButton##{preset.Id}"), false);
+                    
+                    if(isColored) ImGui.PushStyleColor(ImGuiCol.Text, 0xFF66AC87);
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    ImGui.Text(FontAwesomeIcon.ArrowCircleDown.ToIconString());
+                    ImGui.PopFont();
+                    if(isColored) ImGui.PopStyleColor();
+                    
+                    ImGui.GetStateStorage().SetBool(ImGui.GetID($"ImportButton##{preset.Id}"), ImGui.IsItemHovered());
+                    
+                    // Hover and click actions
+                    if (ImGui.IsItemHovered())
                     {
-                        Plugin.PluginLog.Debug($"Clicked! {preset.Data}");
+                        ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+                        if (ImGui.IsItemClicked())
+                        {
+                            Plugin.PluginLog.Debug($"Clicked! {preset.Data}");
+                        }
                     }
                 }
             }
