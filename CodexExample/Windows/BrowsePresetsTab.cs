@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using CodexExample.Helpers;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
@@ -8,13 +9,13 @@ namespace CodexExample.Windows;
 
 public static class BrowsePresetsTab
 {
-    private static CodexPlugin? _presets = null;
+    private static Task<CodexPlugin>? PresetsRequest;
     
     public static void Draw()
     {
         if (ImGui.BeginTable("##browseTable", 2, ImGuiTableFlags.BordersInnerV))
         {
-            // Set the first column width to 150 so it doesn't scale with the window
+            // Set the first column width to 200 so it doesn't scale with the window
             ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, 200);
             
             // The height parameter here is used to draw the border between the columns
@@ -40,7 +41,21 @@ public static class BrowsePresetsTab
             // Right column with the presets themselves
             ImGui.TableNextColumn();
 
-            if (_presets == null)
+            if (PresetsRequest != null && PresetsRequest.IsCompletedSuccessfully)
+            {
+                if (PresetsRequest.Result.Categories.Count > 0)
+                {
+                    foreach (var category in PresetsRequest.Result.Categories)
+                    {
+                        DrawCategoryNode(category);
+                    }
+                }
+                else
+                {
+                    ImGui.Text("No presets found.");
+                }
+            }
+            else
             {
                 // A lot of code to make the button and error text centered
                 var originalPos = ImGui.GetCursorPos();
@@ -55,14 +70,13 @@ public static class BrowsePresetsTab
             
                 // Disable button while query is running
                 // Should be fast enough to be unnoticeable unless API is down
-                using (ImRaii.Disabled(CodexAPI.IsLoading))
+                using (ImRaii.Disabled(PresetsRequest?.IsCompleted == false))
                 {
                     if (ImGui.Button("Get Presets", buttonSize))
                     {
-                        _presets = CodexAPI.GetPresets();
+                        PresetsRequest = CodexAPI.GetPresets();
                     }
                 }
-
                 
                 // A lot of code to make the error message centered
                 if (CodexAPI.ErrorMessage.Length > 0)
@@ -73,14 +87,6 @@ public static class BrowsePresetsTab
                 // Reset the cursor so the tree of presets draws correctly
                 ImGui.SetCursorPos(originalPos);
             }
-            else if (_presets.Categories.Count > 0)
-            {
-                foreach (var category in _presets.Categories)
-                {
-                    DrawCategoryNode(category);
-                }
-            }
-            else ImGui.Text("No presets available.");
 
             ImGui.EndTable();
         }

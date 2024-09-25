@@ -22,25 +22,20 @@ public static class CodexAPI
     public static async Task<CodexPlugin> GetPresets()
     {
         IsLoading = true;
+        ErrorMessage = "";
         
         try
         {
-            
             var response = await HttpClient.GetAsync(BaseUrl + EscapedPluginName);
             var data = await response.Content.ReadFromJsonAsync<CodexPlugin>();
 
-            if (data != null && data.Categories.Count > 0)
-            {
-                ErrorMessage = "";
-                return data;
-            }
-
-            
+            if (data != null && data.Categories.Count > 0) return data;
         }
         catch (Exception ex)
         {
             ErrorMessage = "Error querying Codex API!";
             Plugin.PluginLog.Error(ex.ToString());
+            throw;
         }
         
         IsLoading = false;
