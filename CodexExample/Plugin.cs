@@ -21,7 +21,7 @@ public sealed class Plugin : IDalamudPlugin
 
     private const string CommandName = "/codex";
 
-    public Configuration Configuration { get; init; }
+    public Configuration Configuration { get; set; }
     public readonly WindowSystem WindowSystem = new("CodexExample");
     private MainWindow MainWindow { get; init; }
 

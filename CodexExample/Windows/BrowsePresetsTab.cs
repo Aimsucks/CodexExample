@@ -132,7 +132,8 @@ public static class BrowsePresetsTab
                         if (ImGui.IsItemClicked())
                         {
                             Plugin.PluginLog.Debug($"Clicked! {preset.Data}");
-                            Plugin.CodexExample.Configuration.Save();
+                            Plugin.CodexExample.Configuration.ImportConfiguration(preset.Data);
+                            // Plugin.CodexExample.Configuration.Save();
                         }
                     }
                 }
