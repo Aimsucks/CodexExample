@@ -8,10 +8,6 @@ namespace CodexExample.Helpers;
 
 public static class CodexAPI
 {
-    
-    public static string ErrorMessage = "";
-    public static bool IsLoading = false;
-    
     private const string BaseUrl = "http://localhost:3000/api/plugins/";
     private const string PluginName = "Codex Example";
     private static readonly string EscapedPluginName = Uri.EscapeDataString(PluginName);
@@ -19,27 +15,21 @@ public static class CodexAPI
     // Reusable HTTP client
     private static readonly HttpClient HttpClient = new();
     
-    public static async Task<CodexPlugin> GetPresets()
+    public static async Task<CodexPlugin?> GetPresets()
     {
-        IsLoading = true;
-        ErrorMessage = "";
-        
         try
         {
             var response = await HttpClient.GetAsync(BaseUrl + EscapedPluginName);
+            response.EnsureSuccessStatusCode();
+            
             var data = await response.Content.ReadFromJsonAsync<CodexPlugin>();
-
-            if (data != null && data.Categories.Count > 0) return data;
+            return data ?? null;
         }
         catch (Exception ex)
         {
-            ErrorMessage = "Error querying Codex API!";
             Plugin.PluginLog.Error(ex.ToString());
             throw;
         }
-        
-        IsLoading = false;
-        return null;
     }
 
     public static void Dispose()

@@ -9,7 +9,7 @@ namespace CodexExample.Windows;
 
 public static class BrowsePresetsTab
 {
-    private static Task<CodexPlugin>? PresetsRequest;
+    private static Task<CodexPlugin?>? PresetsRequest;
     
     public static void Draw()
     {
@@ -43,7 +43,7 @@ public static class BrowsePresetsTab
 
             if (PresetsRequest != null && PresetsRequest.IsCompletedSuccessfully)
             {
-                if (PresetsRequest.Result.Categories.Count > 0)
+                if (PresetsRequest.Result?.Categories.Count > 0)
                 {
                     foreach (var category in PresetsRequest.Result.Categories)
                     {
