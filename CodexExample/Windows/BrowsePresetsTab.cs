@@ -74,8 +74,9 @@ public static class BrowsePresetsTab
                 
                 if (PresetsRequest != null && PresetsRequest.IsFaulted)
                 {
-                    _ = CenterCursor("Error querying Codex API!", 50);
-                    ImGui.Text("Error querying Codex API!");
+                    var errorMessage = "Error querying Codex API!";
+                    _ = CenterCursor(errorMessage, 50);
+                    ImGui.Text(errorMessage);
                 }
             
                 // Reset the cursor so the tree of presets draws correctly
