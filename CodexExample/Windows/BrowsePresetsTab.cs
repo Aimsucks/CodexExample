@@ -1,11 +1,15 @@
 using CodexExample.Helpers;
 using Dalamud.Interface;
+using Dalamud.Interface.Components;
+using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Common.Math;
 
 namespace CodexExample.Windows;
 
 public static class BrowsePresetsTab
 {
+    private static CodexPlugin? _presets = null;
+    
     public static void Draw()
     {
         if (ImGui.BeginTable("##browseTable", 2, ImGuiTableFlags.BordersInnerV))
@@ -26,41 +30,57 @@ public static class BrowsePresetsTab
                               "one of the presets under the aforementioned category.");
             
             ImGui.Spacing();
-            
-            ImGui.PushStyleColor(ImGuiCol.Text, 0xFF62DDD8);
-            ImGui.TextWrapped($"Setting 1: {Plugin.CodexExample.Configuration.SettingOne}");
-            ImGui.TextWrapped($"Setting 2: {Plugin.CodexExample.Configuration.SettingTwo}");
-            ImGui.PopStyleColor();
+
+            using (ImRaii.PushColor(ImGuiCol.Text, 0xFF62DDD8))
+            {
+                ImGui.TextWrapped($"Setting 1: {Plugin.CodexExample.Configuration.SettingOne}");
+                ImGui.TextWrapped($"Setting 2: {Plugin.CodexExample.Configuration.SettingTwo}");
+            }
 
             // Right column with the presets themselves
             ImGui.TableNextColumn();
-            
-            // A lot of code to make the button centered follows
-            var availableSize = ImGui.GetContentRegionAvail();
-            var originalPos = ImGui.GetCursorPos();
-            var buttonSize = new Vector2(100, 50);
-            
-            var centerX = (availableSize.X - buttonSize.X) / 2;
-            var centerY = (availableSize.Y - buttonSize.Y) / 2;
-            
-            ImGui.SetCursorPosX(ImGui.GetCursorPosX() + centerX);
-            ImGui.SetCursorPosY(ImGui.GetCursorPosY() + centerY);
-            
-            if (CodexAPI.Presets == null && ImGui.Button("Get Presets", buttonSize))
+
+            if (_presets == null)
             {
-                _ = CodexAPI.GetPresets();
+                // A lot of code to make the button and error text centered
+                var originalPos = ImGui.GetCursorPos();
+                var availableSize = ImGui.GetContentRegionAvail();
+                var buttonSize = new Vector2(100, 50);
+            
+                var centerX = (availableSize.X - buttonSize.X) / 2;
+                var centerY = (availableSize.Y - buttonSize.Y) / 2;
+            
+                ImGui.SetCursorPosX(ImGui.GetCursorPosX() + centerX);
+                ImGui.SetCursorPosY(ImGui.GetCursorPosY() + centerY);
+            
+                // Disable button while query is running
+                // Should be fast enough to be unnoticeable unless API is down
+                using (ImRaii.Disabled(CodexAPI.IsLoading))
+                {
+                    if (ImGui.Button("Get Presets", buttonSize))
+                    {
+                        _presets = CodexAPI.GetPresets();
+                    }
+                }
+
+                
+                // A lot of code to make the error message centered
+                if (CodexAPI.ErrorMessage.Length > 0)
+                {
+                    ImGui.Text(CodexAPI.ErrorMessage);
+                }
+            
+                // Reset the cursor so the tree of presets draws correctly
+                ImGui.SetCursorPos(originalPos);
             }
-            
-            // Reset the cursor so the tree of presets draws correctly
-            ImGui.SetCursorPos(originalPos);
-        
-            if (CodexAPI.Presets != null && CodexAPI.Presets.Categories.Count > 0)
+            else if (_presets.Categories.Count > 0)
             {
-                foreach (var category in CodexAPI.Presets.Categories)
+                foreach (var category in _presets.Categories)
                 {
                     DrawCategoryNode(category);
                 }
             }
+            else ImGui.Text("No presets available.");
 
             ImGui.EndTable();
         }
@@ -85,39 +105,22 @@ public static class BrowsePresetsTab
                     if (preset.Description != null)
                     {
                         ImGui.SameLine();
-
-                        // Draw info icon
-                        ImGui.PushFont(UiBuilder.IconFont);
-                        ImGui.TextUnformatted(FontAwesomeIcon.InfoCircle.ToIconString());
-                        ImGui.PopFont();
-
-                        // Handle hovering over icon for tooltip
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.BeginTooltip();
-
-                            // Wrap tooltip around 30 characters long
-                            ImGui.PushTextWrapPos(ImGui.GetFontSize() * 30f);
-                            ImGui.Text(preset.Description);
-                            ImGui.PopTextWrapPos();
-
-                            ImGui.EndTooltip();
-                        }
+                        ImGuiComponents.HelpMarker(preset.Description);
                     }
 
                     ImGui.SameLine();
                     
                     // Import button
-                    
                     // Boolean to determine if button should be colored green on hover
                     var isColored = ImGui.GetStateStorage()
                                          .GetBool(ImGui.GetID($"ImportButton##{preset.Id}"), false);
                     
-                    if(isColored) ImGui.PushStyleColor(ImGuiCol.Text, 0xFF66AC87);
-                    ImGui.PushFont(UiBuilder.IconFont);
-                    ImGui.Text(FontAwesomeIcon.ArrowCircleDown.ToIconString());
-                    ImGui.PopFont();
-                    if(isColored) ImGui.PopStyleColor();
+                    using (ImRaii.PushColor(ImGuiCol.Text, 0xFF66AC87, isColored))
+                    {
+                        ImGui.PushFont(UiBuilder.IconFont);
+                        ImGui.Text(FontAwesomeIcon.ArrowCircleDown.ToIconString());
+                        ImGui.PopFont();
+                    }
                     
                     ImGui.GetStateStorage()
                          .SetBool(ImGui.GetID($"ImportButton##{preset.Id}"), ImGui.IsItemHovered());
