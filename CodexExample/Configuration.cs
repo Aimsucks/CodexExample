@@ -9,8 +9,8 @@ public class Configuration : IPluginConfiguration
 {
     public int Version { get; set; } = 0;
 
-    public static bool SettingOne { get; set; } = true;
-    public static int SettingTwo { get; set; } = 30;
+    public bool SettingOne { get; set; } = true;
+    public int SettingTwo { get; set; } = 30;
 
     public void Save()
     {
