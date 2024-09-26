@@ -42,7 +42,7 @@ public static class BrowsePresetsTab
             // Right column with the presets themselves
             ImGui.TableNextColumn();
 
-            ImGui.Text($"Status:");
+            ImGui.Text("Status:");
             ImGui.SameLine();
             StatusMessage.Draw();
 
@@ -124,7 +124,9 @@ public static class BrowsePresetsTab
 
                     using (ImRaii.PushColor(ImGuiCol.Text, 0xFF66AC87, isColored))
                     using (ImRaii.PushFont(UiBuilder.IconFont))
+                    {
                         ImGui.Text(FontAwesomeIcon.ArrowCircleDown.ToIconString());
+                    }
 
                     ImGui.GetStateStorage()
                          .SetBool(ImGui.GetID($"ImportButton##{preset.Id}"), ImGui.IsItemHovered());
@@ -143,14 +145,18 @@ public static class BrowsePresetsTab
 
                             if (topLevelCategory == "Configuration Presets")
                             {
-                                Plugin.CodexExample.Configuration.ImportConfiguration(preset);
-                                StatusMessage.SetStatus("Config imported", StatusMessage.Status.Success, 2000);
+                                if (Plugin.CodexExample.Configuration.ImportConfiguration(preset))
+                                    StatusMessage.SetStatus("Config imported", StatusMessage.Status.Success, 2000);
+                                else
+                                    StatusMessage.SetStatus("Config not imported", StatusMessage.Status.Error, 2000);
                             }
 
                             else if (topLevelCategory == "Plugin Presets")
                             {
-                                Plugin.CodexExample.Configuration.ImportPreset(preset);
-                                StatusMessage.SetStatus("Preset imported", StatusMessage.Status.Success, 2000);
+                                if (Plugin.CodexExample.Configuration.ImportPreset(preset))
+                                    StatusMessage.SetStatus("Preset imported", StatusMessage.Status.Success, 2000);
+                                else
+                                    StatusMessage.SetStatus("Preset not imported", StatusMessage.Status.Error, 2000);
                             }
 
                             else
@@ -166,8 +172,10 @@ public static class BrowsePresetsTab
 
             // Recursively create tree nodes for subcategories
             if (category.Subcategories != null && category.Subcategories.Count > 0)
+            {
                 foreach (var subcategory in category.Subcategories)
                     DrawCategoryNode(subcategory, topLevelCategory);
+            }
 
             ImGui.TreePop();
         }
@@ -194,6 +202,8 @@ public static class BrowsePresetsTab
     }
 
     // This is currently unused but left as an example. The status text was moved to the "status" area at the top.
-    internal static Vector2 CenterCursor(string input, int verticalPadding = 0) =>
-        CenterCursor(ImGui.CalcTextSize(input), verticalPadding);
+    internal static Vector2 CenterCursor(string input, int verticalPadding = 0)
+    {
+        return CenterCursor(ImGui.CalcTextSize(input), verticalPadding);
+    }
 }
