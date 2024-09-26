@@ -10,13 +10,14 @@ namespace CodexExample.Windows;
 public static class BrowsePresetsTab
 {
     private static Task<CodexPlugin?>? PresetsRequest;
+    public static string Status = "Idle";
     
     public static void Draw()
     {
         if (ImGui.BeginTable("##browseTable", 2, ImGuiTableFlags.BordersInnerV))
         {
             // Set the first column width to 200 so it doesn't scale with the window
-            ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, 200);
+            ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, 150);
             
             // The height parameter here is used to draw the border between the columns
             ImGui.TableNextRow(ImGuiTableRowFlags.None, ImGui.GetContentRegionAvail().Y - 2);
@@ -40,7 +41,11 @@ public static class BrowsePresetsTab
 
             // Right column with the presets themselves
             ImGui.TableNextColumn();
-
+            
+            ImGui.Text($"Status: {Status}");
+            
+            ImGui.Separator();
+            
             if (PresetsRequest != null && PresetsRequest.IsCompletedSuccessfully)
             {
                 if (PresetsRequest.Result?.Categories.Count > 0)

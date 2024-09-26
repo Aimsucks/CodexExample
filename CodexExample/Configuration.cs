@@ -23,7 +23,12 @@ public class Configuration : IPluginConfiguration
     {
         Name = "Mod. Preset",
         StringData = "String Data 3",
-        IntData = 30
+        IntData = 30,
+        Metadata = new PresetMetadata
+        {
+            Id = 4,
+            Version = 3
+        }
     }];
     
     /*
@@ -40,6 +45,12 @@ public class Configuration : IPluginConfiguration
     public void Save()
     {
         Plugin.PluginInterface.SavePluginConfig(this);
+    }
+
+    public void Reset()
+    {
+        Plugin.CodexExample.Configuration = new Configuration();
+        Plugin.CodexExample.Configuration.Save();
     }
 
     internal bool ImportConfiguration(CodexPreset preset)
