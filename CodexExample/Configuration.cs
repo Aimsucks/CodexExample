@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Dalamud.Configuration;
+using CodexExample.Helpers;
 
 namespace CodexExample;
-
-/*
-
- */
 
 [Serializable]
 public class Configuration : IPluginConfiguration
@@ -18,14 +15,26 @@ public class Configuration : IPluginConfiguration
      * plugin functions.
      */
     
-    public int Version { get; set; } = 0;
+    public int Version { get; set; }
     public bool SettingOne { get; set; } = true;
     public int SettingTwo { get; set; } = 30;
-    public List<Preset> Presets { get; set; } = [];
+    public List<Preset> Presets { get; set; } = [
+    new()
+    {
+        Name = "Mod. Preset",
+        StringData = "String Data 3",
+        IntData = 30
+    }];
     
     /*
      * Helper Functions
-     * Some text will go here eventually.
+     * ImportConfiguration brings in a preset from the Codex API that overwrites raw plugin configuration values.
+     * Plugins might use this to allow users to share visual or functional configurations between each other.
+     *
+     * ImportPreset brings in a preset from the Codex API that adds or updates individual items in a "Presets" list in
+     * the plugin configuration. This is especially useful if the plugin's functionality can be expanded by importing
+     * presets others have created, i.e. waymarks or list filters. These are generally referred to as "Modules" in
+     * Codex.
      */
     
     public void Save()
@@ -33,10 +42,14 @@ public class Configuration : IPluginConfiguration
         Plugin.PluginInterface.SavePluginConfig(this);
     }
 
-    public bool ImportConfiguration(string data)
+    internal bool ImportConfiguration(CodexPreset preset)
     {
+        Plugin.PluginLog.Debug($"Importing configuration preset \"{preset.Name}\" (v{preset.Version})");
+        
         var previousConfig = Plugin.CodexExample.Configuration;
-        var updatedConfig = JsonSerializer.Deserialize<Configuration>(data);
+        var updatedConfig = JsonSerializer.Deserialize<Configuration>(preset.Data);
+        
+        if (updatedConfig == null) return false;
         
         /*
          * Setting the current configuration to the updated configuration will overwrite the *entire* configuration,
@@ -44,18 +57,36 @@ public class Configuration : IPluginConfiguration
          * presets and the plugin version number need to be set separately.
          */
         
-        updatedConfig!.Version = previousConfig.Version;
+        updatedConfig.Version = previousConfig.Version;
         updatedConfig.Presets = previousConfig.Presets;
         
         Plugin.CodexExample.Configuration = updatedConfig;
-        previousConfig.Save();
+        Plugin.CodexExample.Configuration.Save();
 
         return true;
     }
 
-    public bool ImportPreset(string data)
+    internal bool ImportPreset(CodexPreset preset)
     {
-        var newPreset = JsonSerializer.Deserialize<Preset>(data);
+        Plugin.PluginLog.Debug($"Importing plugin preset \"{preset.Name}\" (v{preset.Version})");
+        
+        var newPreset = JsonSerializer.Deserialize<Preset>(preset.Data);
+
+        if (newPreset == null) return false;
+        
+        /*
+         * Preset metadata needs to be added before import since it's stripped from the preset when uploading to
+         * the Codex API. The information is already stored in the API outside the Data parameter. Note that the
+         * "name" parameter is inside the preset data. This is intentional - it allows you to have a different
+         * "internal" name that's displayed when the preset is imported from what's visible in the API itself when
+         * searching for presets.
+         */
+        
+        newPreset.Metadata = new PresetMetadata
+        {
+            Id = preset.Id,
+            Version = preset.Version
+        };
         
         /*
          * Searching the existing presets for the current one and checking the versions will allow us to let the
@@ -64,6 +95,7 @@ public class Configuration : IPluginConfiguration
          */
         
         Presets.Add(newPreset);
+        Save();
 
         return true;
     }
@@ -89,15 +121,15 @@ public class PresetMetadata
     public required int Version { get; set; }
 }
 
-
 /*
- * This preset class is included as an example of a class that another plugin might define. Its data is meaningless.
+ * This preset class is included as an example of a class that another plugin might define. Its data is meaningless
+ * outside the Name and Metadata parameters.
  */
 
 public class Preset
 {
-    public required PresetMetadata Metadata { get; set; }
+    public PresetMetadata? Metadata { get; set; }
     public required string Name { get; set; }
-    public string StringData { get; set; }
-    public int IntData { get; set; }
+    public string? StringData { get; set; }
+    public int? IntData { get; set; }
 }

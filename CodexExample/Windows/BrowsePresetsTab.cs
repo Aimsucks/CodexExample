@@ -47,7 +47,7 @@ public static class BrowsePresetsTab
                 {
                     foreach (var category in PresetsRequest.Result.Categories)
                     {
-                        DrawCategoryNode(category);
+                        DrawCategoryNode(category, category.Name);
                     }
                 }
                 else
@@ -87,7 +87,7 @@ public static class BrowsePresetsTab
         }
     }
 
-    private static void DrawCategoryNode(CodexCategory category)
+    private static void DrawCategoryNode(CodexCategory category, string topLevelCategory)
     {
         if (ImGui.TreeNode(category.Name))
         {
@@ -131,9 +131,17 @@ public static class BrowsePresetsTab
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                         if (ImGui.IsItemClicked())
                         {
-                            Plugin.PluginLog.Debug($"Clicked! {preset.Data}");
-                            Plugin.CodexExample.Configuration.ImportConfiguration(preset.Data);
-                            // Plugin.CodexExample.Configuration.Save();
+                            /*
+                             * The topLevelCategory variable here should not be used in a real plugin - this is one of
+                             * a few different ways that this example can display the ability to import a preset to the
+                             * plugin's configuration directly or add/update a preset to/in the plugin's preset list.
+                             */
+                            
+                            if (topLevelCategory == "Configuration Presets") 
+                                Plugin.CodexExample.Configuration.ImportConfiguration(preset);
+                            else if (topLevelCategory == "Plugin Presets")
+                                Plugin.CodexExample.Configuration.ImportPreset(preset);
+                            else Plugin.PluginLog.Warning($"The plugin category for \"{preset.Name}\" is not recognized.");
                         }
                     }
                 }
@@ -145,7 +153,7 @@ public static class BrowsePresetsTab
                 foreach (var subcategory in category.Subcategories)
                 {
                     // Recursion for subcategories
-                    DrawCategoryNode(subcategory); 
+                    DrawCategoryNode(subcategory, topLevelCategory); 
                 }
             }
             
