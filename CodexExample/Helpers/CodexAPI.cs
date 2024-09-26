@@ -66,5 +66,4 @@ public class CodexPreset
     public required int Version { get; set; }
     public required DateTime UpdatedAt { get; set; }
     public required string Data { get; set; }
-    
 }

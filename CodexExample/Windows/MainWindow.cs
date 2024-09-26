@@ -17,8 +17,7 @@ public class MainWindow : Window, IDisposable
     
     // Create a larger font for the header
     private readonly IFontHandle HeaderFont = Plugin.PluginInterface.UiBuilder.FontAtlas.NewDelegateFontHandle(
-        e => e.OnPreBuild(
-            t => t.AddDalamudDefaultFont(20)));
+        e => e.OnPreBuild(t => t.AddDalamudDefaultFont(20)));
     
     public MainWindow(Plugin plugin, string iconImagePath)
         : base("Codex Example", 
@@ -81,19 +80,19 @@ public class MainWindow : Window, IDisposable
         {
             // Set tab width to half of the window so they scale appropriately
             var windowWidth = ImGui.GetWindowWidth();
-        
-            ImGui.SetNextItemWidth((windowWidth / 2) - 4);
+
+            ImGui.SetNextItemWidth(windowWidth / 2 - 4);
+            if (ImGui.BeginTabItem("Browse Presets"))
+            {
+                BrowsePresetsTab.Draw();
+                ImGui.EndTabItem();
+            }
+            
+            ImGui.SetNextItemWidth((windowWidth / 2));
             if (ImGui.BeginTabItem("Installed Presets"))
             {
                 // Call a separate class's Draw() function to move code out of this class
                 InstalledPresetsTab.Draw();
-                ImGui.EndTabItem();
-            }
-
-            ImGui.SetNextItemWidth(windowWidth / 2);
-            if (ImGui.BeginTabItem("Browse Presets"))
-            {
-                BrowsePresetsTab.Draw();
                 ImGui.EndTabItem();
             }
         

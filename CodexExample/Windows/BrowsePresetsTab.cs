@@ -153,7 +153,13 @@ public static class BrowsePresetsTab
         }
     }
 
-    private static Vector2 CenterCursor(object input, int verticalPadding = 0)
+    /*
+     * The following function is a helper to center buttons and text within a content region. It's being used to
+     * center the "Get Presets" button and the text underneath it in the event that there's an error fetching from
+     * the Codex API.
+     */
+    
+    internal static Vector2 CenterCursor(object input, int verticalPadding = 0)
     {
         Vector2 size = new (0,0);
 
