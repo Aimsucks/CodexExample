@@ -10,7 +10,7 @@ namespace CodexExample.Windows;
 public static class BrowsePresetsTab
 {
     private static Task<CodexPlugin?>? PresetsRequest;
-    public static string Status = "Idle";
+    internal static bool QueryState;
     
     public static void Draw()
     {
@@ -42,7 +42,9 @@ public static class BrowsePresetsTab
             // Right column with the presets themselves
             ImGui.TableNextColumn();
             
-            ImGui.Text($"Status: {Status}");
+            ImGui.Text($"Status:");
+            ImGui.SameLine();
+            StatusMessage.Draw();
             
             ImGui.Separator();
             
@@ -50,15 +52,16 @@ public static class BrowsePresetsTab
             {
                 if (PresetsRequest.Result?.Categories.Count > 0)
                 {
-                    foreach (var category in PresetsRequest.Result.Categories)
+                    if (QueryState)
                     {
-                        DrawCategoryNode(category, category.Name);
+                        StatusMessage.ResetStatus();
+                        QueryState = false;
                     }
+                    
+                    foreach (var category in PresetsRequest.Result.Categories)
+                        DrawCategoryNode(category, category.Name);
                 }
-                else
-                {
-                    ImGui.Text("No presets found.");
-                }
+                else StatusMessage.SetStatus("No presets found", StatusMessage.Status.Warning, 3000);
             }
             else
             {
@@ -72,20 +75,18 @@ public static class BrowsePresetsTab
                     if (ImGui.Button("Get Presets", buttonSize))
                     {
                         PresetsRequest = CodexAPI.GetPresets();
+                        QueryState = true;
                     }
                 }
                 
-                ImGui.SetCursorPos(originalPos);
-                
-                if (PresetsRequest != null && PresetsRequest.IsFaulted)
-                {
-                    var errorMessage = "Error querying Codex API!";
-                    _ = CenterCursor(errorMessage, 50);
-                    ImGui.Text(errorMessage);
-                }
-            
                 // Reset the cursor so the tree of presets draws correctly
                 ImGui.SetCursorPos(originalPos);
+                
+                if (PresetsRequest?.IsCompleted == false)
+                    StatusMessage.SetStatus("Querying API", StatusMessage.Status.Warning, 3000);
+                
+                if (PresetsRequest != null && PresetsRequest.IsFaulted) 
+                    StatusMessage.SetStatus("Error querying API", StatusMessage.Status.Error, 3000);
             }
 
             ImGui.EndTable();
@@ -123,9 +124,7 @@ public static class BrowsePresetsTab
                     
                     using (ImRaii.PushColor(ImGuiCol.Text, 0xFF66AC87, isColored))
                     using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
                         ImGui.Text(FontAwesomeIcon.ArrowCircleDown.ToIconString());
-                    }
                     
                     ImGui.GetStateStorage()
                          .SetBool(ImGui.GetID($"ImportButton##{preset.Id}"), ImGui.IsItemHovered());
@@ -141,12 +140,24 @@ public static class BrowsePresetsTab
                              * a few different ways that this example can display the ability to import a preset to the
                              * plugin's configuration directly or add/update a preset to/in the plugin's preset list.
                              */
-                            
-                            if (topLevelCategory == "Configuration Presets") 
+
+                            if (topLevelCategory == "Configuration Presets")
+                            {
                                 Plugin.CodexExample.Configuration.ImportConfiguration(preset);
+                                StatusMessage.SetStatus("Config imported", StatusMessage.Status.Success, 2000);
+                            }
+                                
                             else if (topLevelCategory == "Plugin Presets")
+                            {
                                 Plugin.CodexExample.Configuration.ImportPreset(preset);
-                            else Plugin.PluginLog.Warning($"The plugin category for \"{preset.Name}\" is not recognized.");
+                                StatusMessage.SetStatus("Preset imported", StatusMessage.Status.Success, 2000);
+                            }
+
+                            else
+                            {
+                                Plugin.PluginLog.Warning($"The plugin category for \"{preset.Name}\" is not recognized.");
+                                StatusMessage.SetStatus("Unrecognized preset", StatusMessage.Status.Warning, 2000);
+                            }
                         }
                     }
                 }
@@ -154,13 +165,8 @@ public static class BrowsePresetsTab
 
             // Recursively create tree nodes for subcategories
             if (category.Subcategories != null && category.Subcategories.Count > 0)
-            {
                 foreach (var subcategory in category.Subcategories)
-                {
-                    // Recursion for subcategories
                     DrawCategoryNode(subcategory, topLevelCategory); 
-                }
-            }
             
             ImGui.TreePop();
         }
@@ -171,15 +177,14 @@ public static class BrowsePresetsTab
      * center the "Get Presets" button and the text underneath it in the event that there's an error fetching from
      * the Codex API.
      */
+    
     internal static Vector2 CenterCursor(Vector2 input, int verticalPadding = 0)
     {
-        Vector2 size = new (0,0);
-        
         var originalPos = ImGui.GetCursorPos();
         var availableSize = ImGui.GetContentRegionAvail();
             
-        var centerX = (availableSize.X - size.X) / 2f;
-        var centerY = (availableSize.Y - size.Y) / 2f;
+        var centerX = (availableSize.X - input.X) / 2f;
+        var centerY = (availableSize.Y - input.Y) / 2f;
             
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + centerX);
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + centerY + verticalPadding);
@@ -187,6 +192,7 @@ public static class BrowsePresetsTab
         return originalPos;
     }
     
+    // This is currently unused but left as an example. The status text was moved to the "status" area at the top.
     internal static Vector2 CenterCursor(string input, int verticalPadding = 0) => 
         CenterCursor(ImGui.CalcTextSize(input), verticalPadding);
 }
