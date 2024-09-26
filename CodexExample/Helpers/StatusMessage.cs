@@ -1,22 +1,23 @@
-using System;
 using System.Numerics;
 using System.Threading;
+using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 
 namespace CodexExample.Helpers;
 
 public static class StatusMessage
 {
-    private static string StatusText = "Idle";
-    private static Vector4 StatusColor = Dalamud.Interface.Colors.ImGuiColors.DalamudWhite;
-    private static Timer? Timer;
-
-    public enum Status {
+    public enum Status
+    {
         Default,
         Success,
         Error,
         Warning
     }
+
+    private static string StatusText = "Idle";
+    private static Vector4 StatusColor = ImGuiColors.DalamudWhite;
+    private static Timer? Timer;
 
 
     public static void Draw()
@@ -31,12 +32,12 @@ public static class StatusMessage
     {
         StatusColor = status switch
         {
-            Status.Success => Dalamud.Interface.Colors.ImGuiColors.HealerGreen,
-            Status.Error => Dalamud.Interface.Colors.ImGuiColors.DPSRed,
-            Status.Warning => Dalamud.Interface.Colors.ImGuiColors.DalamudYellow,
-            _ => Dalamud.Interface.Colors.ImGuiColors.DalamudWhite
+            Status.Success => ImGuiColors.HealerGreen,
+            Status.Error => ImGuiColors.DPSRed,
+            Status.Warning => ImGuiColors.DalamudYellow,
+            _ => ImGuiColors.DalamudWhite
         };
-        
+
         StatusText = text;
 
         if (duration > 0)
@@ -48,7 +49,7 @@ public static class StatusMessage
 
     public static void ResetStatus(object? state = null)
     {
-        StatusColor = Dalamud.Interface.Colors.ImGuiColors.DalamudWhite;
+        StatusColor = ImGuiColors.DalamudWhite;
         StatusText = "Idle";
         Timer?.Dispose();
     }

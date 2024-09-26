@@ -1,40 +1,30 @@
 ﻿global using ImGuiNET;
-
-using Dalamud.Game.Command;
-using Dalamud.IoC;
-using Dalamud.Plugin;
 using System.IO;
 using CodexExample.Helpers;
 using CodexExample.Windows;
+using Dalamud.Game.Command;
 using Dalamud.Interface.Windowing;
+using Dalamud.IoC;
+using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
 namespace CodexExample;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
-    [PluginService] internal static ITextureProvider TextureProvider { get; private set; } = null!;
-    [PluginService] internal static ICommandManager CommandManager { get; private set; } = null!;
-    [PluginService] internal static IPluginLog PluginLog { get; private set; } = null!;
-    internal static Plugin CodexExample { get; private set; } = null!;
-
     private const string CommandName = "/codex";
-
-    public Configuration Configuration { get; set; }
     public readonly WindowSystem WindowSystem = new("CodexExample");
-    private MainWindow MainWindow { get; init; }
 
     public Plugin()
     {
         CodexExample = this;
-        
+
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-        
+
         var iconImagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "icon.png");
-        
+
         MainWindow = new MainWindow(this, iconImagePath);
-        
+
         WindowSystem.AddWindow(MainWindow);
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
@@ -43,9 +33,26 @@ public sealed class Plugin : IDalamudPlugin
         });
 
         PluginInterface.UiBuilder.Draw += DrawUI;
-        
+
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
     }
+
+    [PluginService]
+    internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
+
+    [PluginService]
+    internal static ITextureProvider TextureProvider { get; private set; } = null!;
+
+    [PluginService]
+    internal static ICommandManager CommandManager { get; private set; } = null!;
+
+    [PluginService]
+    internal static IPluginLog PluginLog { get; private set; } = null!;
+
+    internal static Plugin CodexExample { get; private set; } = null!;
+
+    public Configuration Configuration { get; set; }
+    private MainWindow MainWindow { get; init; }
 
     public void Dispose()
     {
@@ -60,7 +67,13 @@ public sealed class Plugin : IDalamudPlugin
         ToggleMainUI();
     }
 
-    private void DrawUI() => WindowSystem.Draw();
-    
-    public void ToggleMainUI() => MainWindow.Toggle();
+    private void DrawUI()
+    {
+        WindowSystem.Draw();
+    }
+
+    public void ToggleMainUI()
+    {
+        MainWindow.Toggle();
+    }
 }

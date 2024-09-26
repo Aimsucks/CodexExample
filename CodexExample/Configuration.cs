@@ -1,38 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using CodexExample.Helpers;
 using Dalamud.Configuration;
 using Newtonsoft.Json;
-using CodexExample.Helpers;
 
 namespace CodexExample;
 
 [Serializable]
 public class Configuration : IPluginConfiguration
 {
-    /*
-     * Configuration Presets
-     * These are presets that cover the plugin's settings itself. Updating these will immediately update how the
-     * plugin functions.
-     */
-    
-    public int Version { get; set; }
     public bool SettingOne { get; set; } = true;
     public int SettingTwo { get; set; } = 30;
-    
+
     [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
-    public List<Preset> Presets { get; set; } = [
-    new()
-    {
-        Name = "Mod. Preset",
-        StringData = "String Data 3",
-        IntData = 30,
-        Metadata = new PresetMetadata
+    public List<Preset> Presets { get; set; } =
+    [
+        new()
         {
-            Id = 4,
-            Version = 3
+            Name = "Mod. Preset",
+            StringData = "String Data 3",
+            IntData = 30,
+            Metadata = new PresetMetadata
+            {
+                Id = 4,
+                Version = 3
+            }
         }
-    }];
-    
+    ];
+
+
+    public int Version { get; set; }
+
     /*
      * Helper Functions
      * ImportConfiguration brings in a preset from the Codex API that overwrites raw plugin configuration values.
@@ -43,7 +41,7 @@ public class Configuration : IPluginConfiguration
      * presets others have created, i.e. waymarks or list filters. These are generally referred to as "Modules" in
      * Codex.
      */
-    
+
     public void Save()
     {
         Plugin.PluginInterface.SavePluginConfig(this);
@@ -55,38 +53,58 @@ public class Configuration : IPluginConfiguration
         Plugin.CodexExample.Configuration.Save();
     }
 
+    /*
+     * Configuration Presets
+     * These are presets that cover the plugin's settings itself. Updating these will immediately update how the
+     * plugin functions.
+     */
+
     internal bool ImportConfiguration(CodexPreset preset)
     {
         Plugin.PluginLog.Debug($"Importing configuration preset \"{preset.Name}\" (v{preset.Version})");
-        
+
         var previousConfig = Plugin.CodexExample.Configuration;
         var updatedConfig = JsonConvert.DeserializeObject<Configuration>(preset.Data);
-        
+
         if (updatedConfig == null) return false;
-        
+
         /*
          * Setting the current configuration to the updated configuration will overwrite the *entire* configuration,
          * so you need to bring anything that doesn't get exported with an entire plugin configuration. In this case,
          * presets and the plugin version number need to be set separately.
          */
-        
+
         updatedConfig.Version = previousConfig.Version;
         updatedConfig.Presets = previousConfig.Presets;
-        
+
         Plugin.CodexExample.Configuration = updatedConfig;
         Plugin.CodexExample.Configuration.Save();
 
         return true;
     }
 
+    /*
+     * Module Presets
+     * The word "module" refers to anything that isn't baked into the actual functionality of the plugin and will add
+     * functionality to it by including it as a preset. A good example of this would be filters in Allagan Tools. The
+     * configurations that are imported are supplementary to the plugin's configuration.
+     *
+     * In these presets, you will need to add a "metadata" object with the following parameters:
+     * - An "id" integer to identify the preset in the API
+     * - A "version" integer to provide updates to the preset when comparing it to the API version of that preset
+     *
+     * Anything pre-existing is fine and will be contained in the "data" string attribute of the preset coming from
+     * Codex's API.
+     */
+
     internal bool ImportPreset(CodexPreset preset)
     {
         Plugin.PluginLog.Debug($"Importing plugin preset \"{preset.Name}\" (v{preset.Version})");
-        
+
         var newPreset = JsonConvert.DeserializeObject<Preset>(preset.Data);
 
         if (newPreset == null) return false;
-        
+
         /*
          * Preset metadata needs to be added before import since it's stripped from the preset when uploading to
          * the Codex API. The information is already stored in the API outside the Data parameter. Note that the
@@ -94,39 +112,25 @@ public class Configuration : IPluginConfiguration
          * "internal" name that's displayed when the preset is imported from what's visible in the API itself when
          * searching for presets.
          */
-        
+
         newPreset.Metadata = new PresetMetadata
         {
             Id = preset.Id,
             Version = preset.Version
         };
-        
+
         /*
          * Searching the existing presets for the current one and checking the versions will allow us to let the
          * user know it's going to be updated instead of imported or prevent the user from importing an existing
          * preset.
          */
-        
+
         Presets.Add(newPreset);
         Save();
 
         return true;
     }
 }
-
-/*
- * Module Presets
- * The word "module" refers to anything that isn't baked into the actual functionality of the plugin and will add
- * functionality to it by including it as a preset. A good example of this would be filters in Allagan Tools. The
- * configurations that are imported are supplementary to the plugin's configuration.
- *
- * In these presets, you will need to add a "metadata" object with the following parameters:
- * - An "id" integer to identify the preset in the API
- * - A "version" integer to provide updates to the preset when comparing it to the API version of that preset
- *
- * Anything pre-existing is fine and will be contained in the "data" string attribute of the preset coming from
- * Codex's API.
- */
 
 public class PresetMetadata
 {
