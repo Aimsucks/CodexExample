@@ -187,9 +187,6 @@ public static class BrowsePresetsTab
         return originalPos;
     }
     
-    internal static Vector2 CenterCursor(string input, int verticalPadding = 0)
-    {
-        Vector2 size = ImGui.CalcTextSize(input);
-        return CenterCursor(size, verticalPadding);
-    }
+    internal static Vector2 CenterCursor(string input, int verticalPadding = 0) => 
+        CenterCursor(ImGui.CalcTextSize(input), verticalPadding);
 }
