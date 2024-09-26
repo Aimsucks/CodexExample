@@ -167,17 +167,13 @@ public static class BrowsePresetsTab
     }
 
     /*
-     * The following function is a helper to center buttons and text within a content region. It's being used to
+     * The following functions are helpers to center buttons and text within a content region. It's being used to
      * center the "Get Presets" button and the text underneath it in the event that there's an error fetching from
      * the Codex API.
      */
-    
-    internal static Vector2 CenterCursor(object input, int verticalPadding = 0)
+    internal static Vector2 CenterCursor(Vector2 input, int verticalPadding = 0)
     {
         Vector2 size = new (0,0);
-
-        if (input is Vector2 vec) size = vec;
-        else if (input is string str) size = ImGui.CalcTextSize(str);
         
         var originalPos = ImGui.GetCursorPos();
         var availableSize = ImGui.GetContentRegionAvail();
@@ -189,5 +185,11 @@ public static class BrowsePresetsTab
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + centerY + verticalPadding);
         
         return originalPos;
+    }
+    
+    internal static Vector2 CenterCursor(string input, int verticalPadding = 0)
+    {
+        Vector2 size = ImGui.CalcTextSize(input);
+        return CenterCursor(size, verticalPadding);
     }
 }
