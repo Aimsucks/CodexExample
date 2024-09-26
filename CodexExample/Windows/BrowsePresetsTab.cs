@@ -171,8 +171,7 @@ public static class BrowsePresetsTab
                                     Configuration.PresetImportStatus.AlreadyExists =>
                                         ("Preset exists", StatusMessage.Status.Warning),
 
-                                    _ =>
-                                        ("Preset not imported", StatusMessage.Status.Error)
+                                    _ => ("Preset not imported", StatusMessage.Status.Error)
                                 };
                             }
 
@@ -180,6 +179,7 @@ public static class BrowsePresetsTab
                             {
                                 Plugin.PluginLog.Warning(
                                     $"The plugin category for \"{preset.Name}\" is not recognized.");
+
                                 message = "Unrecognized preset";
                                 status = StatusMessage.Status.Warning;
                             }
