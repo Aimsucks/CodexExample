@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using Dalamud.Configuration;
+using Newtonsoft.Json;
 using CodexExample.Helpers;
 
 namespace CodexExample;
@@ -18,6 +18,8 @@ public class Configuration : IPluginConfiguration
     public int Version { get; set; }
     public bool SettingOne { get; set; } = true;
     public int SettingTwo { get; set; } = 30;
+    
+    [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
     public List<Preset> Presets { get; set; } = [
     new()
     {
@@ -58,7 +60,7 @@ public class Configuration : IPluginConfiguration
         Plugin.PluginLog.Debug($"Importing configuration preset \"{preset.Name}\" (v{preset.Version})");
         
         var previousConfig = Plugin.CodexExample.Configuration;
-        var updatedConfig = JsonSerializer.Deserialize<Configuration>(preset.Data);
+        var updatedConfig = JsonConvert.DeserializeObject<Configuration>(preset.Data);
         
         if (updatedConfig == null) return false;
         
@@ -81,7 +83,7 @@ public class Configuration : IPluginConfiguration
     {
         Plugin.PluginLog.Debug($"Importing plugin preset \"{preset.Name}\" (v{preset.Version})");
         
-        var newPreset = JsonSerializer.Deserialize<Preset>(preset.Data);
+        var newPreset = JsonConvert.DeserializeObject<Preset>(preset.Data);
 
         if (newPreset == null) return false;
         
