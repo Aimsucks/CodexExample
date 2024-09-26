@@ -143,28 +143,48 @@ public static class BrowsePresetsTab
                              * plugin's configuration directly or add/update a preset to/in the plugin's preset list.
                              */
 
+                            string message;
+                            StatusMessage.Status status;
+
                             if (topLevelCategory == "Configuration Presets")
                             {
-                                if (Plugin.CodexExample.Configuration.ImportConfiguration(preset))
-                                    StatusMessage.SetStatus("Config imported", StatusMessage.Status.Success, 2000);
-                                else
-                                    StatusMessage.SetStatus("Config not imported", StatusMessage.Status.Error, 2000);
+                                (message, status) =
+                                    Plugin.CodexExample.Configuration.ImportConfiguration(preset) switch
+                                    {
+                                        Configuration.PresetImportStatus.Success => ("Config imported",
+                                                    StatusMessage.Status.Success),
+
+                                        _ => ("Config not imported", StatusMessage.Status.Error)
+                                    };
                             }
 
                             else if (topLevelCategory == "Plugin Presets")
                             {
-                                if (Plugin.CodexExample.Configuration.ImportPreset(preset))
-                                    StatusMessage.SetStatus("Preset imported", StatusMessage.Status.Success, 2000);
-                                else
-                                    StatusMessage.SetStatus("Preset not imported", StatusMessage.Status.Error, 2000);
+                                (message, status) = Plugin.CodexExample.Configuration.ImportPreset(preset) switch
+                                {
+                                    Configuration.PresetImportStatus.Success =>
+                                        ("Preset imported", StatusMessage.Status.Success),
+
+                                    Configuration.PresetImportStatus.Updated =>
+                                        ("Preset updated", StatusMessage.Status.Success),
+
+                                    Configuration.PresetImportStatus.AlreadyExists =>
+                                        ("Preset exists", StatusMessage.Status.Warning),
+
+                                    _ =>
+                                        ("Preset not imported", StatusMessage.Status.Error)
+                                };
                             }
 
                             else
                             {
                                 Plugin.PluginLog.Warning(
                                     $"The plugin category for \"{preset.Name}\" is not recognized.");
-                                StatusMessage.SetStatus("Unrecognized preset", StatusMessage.Status.Warning, 2000);
+                                message = "Unrecognized preset";
+                                status = StatusMessage.Status.Warning;
                             }
+
+                            StatusMessage.SetStatus(message, status, 2000);
                         }
                     }
                 }

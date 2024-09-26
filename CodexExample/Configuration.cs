@@ -9,6 +9,14 @@ namespace CodexExample;
 [Serializable]
 public class Configuration : IPluginConfiguration
 {
+    public enum PresetImportStatus
+    {
+        Success,
+        Updated,
+        AlreadyExists,
+        Failure
+    }
+
     public bool SettingOne { get; set; } = true;
     public int SettingTwo { get; set; } = 30;
 
@@ -23,11 +31,10 @@ public class Configuration : IPluginConfiguration
             Metadata = new PresetMetadata
             {
                 Id = 4,
-                Version = 3
+                Version = 1
             }
         }
     ];
-
 
     public int Version { get; set; }
 
@@ -59,14 +66,14 @@ public class Configuration : IPluginConfiguration
      * plugin functions.
      */
 
-    internal bool ImportConfiguration(CodexPreset preset)
+    internal PresetImportStatus ImportConfiguration(CodexPreset preset)
     {
         Plugin.PluginLog.Debug($"Importing configuration preset \"{preset.Name}\" (v{preset.Version})");
 
         var previousConfig = Plugin.CodexExample.Configuration;
         var updatedConfig = JsonConvert.DeserializeObject<Configuration>(preset.Data);
 
-        if (updatedConfig == null) return false;
+        if (updatedConfig == null) return PresetImportStatus.Failure;
 
         /*
          * Setting the current configuration to the updated configuration will overwrite the *entire* configuration,
@@ -80,7 +87,7 @@ public class Configuration : IPluginConfiguration
         Plugin.CodexExample.Configuration = updatedConfig;
         Plugin.CodexExample.Configuration.Save();
 
-        return true;
+        return PresetImportStatus.Success;
     }
 
     /*
@@ -97,13 +104,13 @@ public class Configuration : IPluginConfiguration
      * Codex's API.
      */
 
-    internal bool ImportPreset(CodexPreset preset)
+    internal PresetImportStatus ImportPreset(CodexPreset preset)
     {
         Plugin.PluginLog.Debug($"Importing plugin preset \"{preset.Name}\" (v{preset.Version})");
 
         var newPreset = JsonConvert.DeserializeObject<Preset>(preset.Data);
 
-        if (newPreset == null) return false;
+        if (newPreset == null) return PresetImportStatus.Failure;
 
         /*
          * Preset metadata needs to be added before import since it's stripped from the preset when uploading to
@@ -125,10 +132,25 @@ public class Configuration : IPluginConfiguration
          * preset.
          */
 
+        var existingPreset = Presets.Find(p => p.Metadata?.Id == newPreset.Metadata.Id);
+
+        if (existingPreset?.Metadata != null)
+        {
+            if (existingPreset.Metadata.Version < newPreset.Metadata.Version)
+            {
+                Presets.Remove(existingPreset);
+                Presets.Add(newPreset);
+                Save();
+                return PresetImportStatus.Updated;
+            }
+
+            return PresetImportStatus.AlreadyExists;
+        }
+
         Presets.Add(newPreset);
         Save();
 
-        return true;
+        return PresetImportStatus.Success;
     }
 }
 
