@@ -116,7 +116,7 @@ public static class BrowsePresetsTab
                     ImGui.SameLine();
 
                     // Import button
-                    ClickableIcon.Draw(FontAwesomeIcon.ArrowCircleDown, 0xFF66AC87);
+                    ClickableIcon.Draw(FontAwesomeIcon.ArrowCircleDown, 0xFF66AC87, preset.Name + preset.Id);
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
