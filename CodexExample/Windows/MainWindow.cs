@@ -86,14 +86,15 @@ public class MainWindow : Window, IDisposable
             if (ImGui.BeginTabItem("Browse Presets"))
             {
                 BrowsePresetsTab.Draw();
+                InstalledPresetsTab.PresetUpdatesRequest = null;
                 ImGui.EndTabItem();
             }
 
             ImGui.SetNextItemWidth(windowWidth / 2);
             if (ImGui.BeginTabItem("Installed Presets"))
             {
-                // Call a separate class's Draw() function to move code out of this class
                 InstalledPresetsTab.Draw();
+                BrowsePresetsTab.PresetsRequest = null;
                 ImGui.EndTabItem();
             }
 
