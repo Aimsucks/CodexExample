@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -27,8 +26,6 @@ public static class CodexAPI
 
             var data = await response.Content.ReadFromJsonAsync<CodexPlugin>();
 
-            if (data == null) throw new WebException("API returned no results.");
-
             return data;
         }
         catch (Exception ex)
@@ -40,7 +37,7 @@ public static class CodexAPI
 
     public static async Task<List<CodexPreset>> GetPresetUpdates(List<int> presetIds)
     {
-        if (presetIds.Count == 0) throw new ArgumentException(nameof(presetIds));
+        if (presetIds.Count == 0) throw new ArgumentException("At least one preset ID must be provided.");
 
         try
         {
@@ -51,7 +48,7 @@ public static class CodexAPI
 
             var data = await response.Content.ReadFromJsonAsync<List<CodexPreset>>();
 
-            if (data == null || data.Count == 0) throw new WebException("API returned no results.");
+            if (data == null || data.Count == 0) return [];
 
             return data;
         }
@@ -64,6 +61,8 @@ public static class CodexAPI
 
     public static async Task<List<CodexPreset>> GetPresetUpdates(List<IPreset> presets)
     {
+        if (presets.Count == 0) throw new ArgumentException("At least one preset must be provided.");
+
         var presetIds = presets
                         .Where(p => p.Metadata != null)
                         .Select(p => p.Metadata!.Id)
