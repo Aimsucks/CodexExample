@@ -159,12 +159,12 @@ public class Configuration : IPluginConfiguration
  * outside the Name and Metadata parameters.
  */
 
-public class Preset
+public class Preset : IPreset
 {
-    public PresetMetadata? Metadata { get; set; }
-    public required string Name { get; set; }
     public string? StringData { get; set; }
     public int? IntData { get; set; }
+    public PresetMetadata? Metadata { get; set; }
+    public required string Name { get; set; }
 }
 
 /*
