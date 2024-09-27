@@ -1,8 +1,13 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CodexExample.Helpers;
+
 namespace CodexExample.Windows;
 
 public static class InstalledPresetsTab
 {
-    public static string Status = "Idle";
+    private static Task<List<CodexPreset>> PresetUpdatesRequest;
+    internal static bool QueryState = false;
 
     public static void Draw()
     {
@@ -26,11 +31,19 @@ public static class InstalledPresetsTab
             // Right column with the presets themselves
             ImGui.TableNextColumn();
 
-            ImGui.Text($"Status: {Status}");
+            ImGui.Text("Status:");
+            ImGui.SameLine();
+
+            StatusMessage.Draw();
 
             ImGui.SameLine();
 
             if (ImGui.Button("Reset")) Plugin.CodexExample.Configuration.Reset();
+
+            ImGui.SameLine();
+
+            if (ImGui.Button("Update"))
+                PresetUpdatesRequest = CodexAPI.GetPresetUpdates(Plugin.CodexExample.Configuration.Presets);
 
             ImGui.Separator();
 
