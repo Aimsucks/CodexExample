@@ -138,9 +138,22 @@ public class Configuration : IPluginConfiguration
         {
             if (existingPreset.Metadata.Version < newPreset.Metadata.Version)
             {
-                Presets.Remove(existingPreset);
-                Presets.Add(newPreset);
+                /*
+                 * By grabbing the old index and replacing the preset at the old index, the list order should be
+                 * maintained. As a backup, it will add the updated preset to the bottom of the list.
+                 */
+
+                var existingIndex = Presets.IndexOf(existingPreset);
+
+                if (existingIndex != -1) Presets[existingIndex] = newPreset;
+                else
+                {
+                    Presets.Remove(existingPreset);
+                    Presets.Add(newPreset);
+                }
+
                 Save();
+
                 return PresetImportStatus.Updated;
             }
 
