@@ -10,9 +10,9 @@ namespace CodexExample.Windows;
 
 public static class InstalledPresetsTab
 {
-    internal static Task<List<CodexPreset>>? PresetUpdatesRequest;
-    internal static bool QueryState;
-    internal static bool PresetJustUpdated;
+    public static Task<List<CodexPreset>>? PresetUpdatesRequest;
+    private static bool QueryState;
+    private static bool PresetJustUpdated;
     private static bool IdleState;
 
     public static void Draw()

@@ -9,8 +9,8 @@ namespace CodexExample.Windows;
 
 public static class BrowsePresetsTab
 {
-    internal static Task<CodexPlugin?>? PresetsRequest;
-    internal static bool QueryState;
+    public static Task<CodexPlugin?>? PresetsRequest;
+    private static bool QueryState;
 
     public static void Draw()
     {
