@@ -1,9 +1,9 @@
+using System.Numerics;
 using System.Threading.Tasks;
 using CodexExample.Helpers;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
-using FFXIVClientStructs.FFXIV.Common.Math;
 
 namespace CodexExample.Windows;
 
