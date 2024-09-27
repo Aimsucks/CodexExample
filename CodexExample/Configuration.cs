@@ -30,7 +30,7 @@ public class Configuration : IPluginConfiguration
             IntData = 30,
             Metadata = new PresetMetadata
             {
-                Id = 4,
+                Id = 6,
                 Version = 1
             }
         }
