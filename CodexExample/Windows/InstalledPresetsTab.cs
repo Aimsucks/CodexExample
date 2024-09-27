@@ -13,6 +13,7 @@ public static class InstalledPresetsTab
     internal static Task<List<CodexPreset>>? PresetUpdatesRequest;
     internal static bool QueryState;
     internal static bool PresetJustUpdated;
+    private static bool IdleState;
 
     public static void Draw()
     {
@@ -79,6 +80,7 @@ public static class InstalledPresetsTab
                     PresetUpdatesRequest = null;
                 PresetUpdatesRequest = CodexAPI.GetPresetUpdates(Plugin.CodexExample.Configuration.Presets);
                 QueryState = true;
+                IdleState = false;
                 PresetJustUpdated = false;
             }
 
@@ -109,7 +111,11 @@ public static class InstalledPresetsTab
 
                 if (anyOutdatedPresets)
                     StatusMessage.SetStatus("Updates found", StatusMessage.Status.Success, 3000);
-                else StatusMessage.SetStatus("No updates found", StatusMessage.Status.Warning, 3000);
+                else if (!IdleState)
+                {
+                    StatusMessage.SetStatus("No updates found", StatusMessage.Status.Warning, 3000);
+                    IdleState = true;
+                }
             }
 
             if (PresetUpdatesRequest?.IsCompleted == false)
