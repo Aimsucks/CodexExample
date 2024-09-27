@@ -9,7 +9,7 @@ namespace CodexExample.Helpers;
 
 public static class CodexAPI
 {
-    private const string BaseUrl = "http://localhost:3000/api/plugins/";
+    private const string BaseUrl = "http://localhost:3000/api/v1/plugins/";
     private const string PluginName = "Codex Example";
     private static readonly string EscapedPluginName = Uri.EscapeDataString(PluginName);
 
