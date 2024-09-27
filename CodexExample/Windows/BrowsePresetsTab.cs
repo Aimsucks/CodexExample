@@ -44,10 +44,33 @@ public static class BrowsePresetsTab
             ImGui.SameLine();
             StatusMessage.Draw();
 
-            ImGui.Separator();
-
             if (PresetsRequest != null && PresetsRequest.IsCompletedSuccessfully)
             {
+                // var availableWidth = ImGui.GetContentRegionAvail().X;
+                // var iconWidth = ImGui.CalcTextSize(FontAwesomeIcon.Sync.ToIconString()).X +
+                //                 (ImGui.GetStyle().ItemSpacing.X * 2);
+                //
+                // ImGui.SameLine(availableWidth - iconWidth);
+
+                /*
+                 * The Update button queries the Codex API for a list of all available presets. Later, this
+                 * functionality will be expanded to only show presets not currently installed by checking the
+                 * Preset.Metadata.Id and comparing it to the list received.
+                 *
+                 * TODO: Fix Get Presets button interaction with StatusMessage so this can be uncommented.
+                 */
+
+                // ClickableIcon.Draw(FontAwesomeIcon.Sync, ImGuiColors.ParsedBlue);
+                // if (ImGui.IsItemClicked())
+                // {
+                //     PresetsRequest = CodexAPI.GetPresets();
+                //     QueryState = true;
+                //
+                //     StatusMessage.SetStatus("Querying API", StatusMessage.Status.Warning, 3000);
+                // }
+
+                ImGui.Separator();
+
                 if (PresetsRequest.Result?.Categories.Count > 0)
                 {
                     if (QueryState)
@@ -63,6 +86,8 @@ public static class BrowsePresetsTab
             }
             else
             {
+                ImGui.Separator();
+
                 var buttonSize = new Vector2(100, 50);
                 var originalPos = CenterCursor(buttonSize);
 
