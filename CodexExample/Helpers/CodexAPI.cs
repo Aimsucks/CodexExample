@@ -59,7 +59,7 @@ public static class CodexAPI
         }
     }
 
-    public static async Task<List<CodexPreset>> GetPresetUpdates(List<IPreset> presets)
+    public static async Task<List<CodexPreset>> GetPresetUpdates<T>(List<T> presets) where T:IPreset
     {
         if (presets.Count == 0) throw new ArgumentException("At least one preset must be provided.");
 
