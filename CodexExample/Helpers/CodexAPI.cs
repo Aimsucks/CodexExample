@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -19,11 +21,15 @@ public static class CodexAPI
     {
         try
         {
-            var response = await HttpClient.GetAsync(BaseUrl + EscapedPluginName);
+            var url = BaseUrl + EscapedPluginName;
+            var response = await HttpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
             var data = await response.Content.ReadFromJsonAsync<CodexPlugin>();
-            return data ?? null;
+
+            if (data == null) throw new WebException("API returned no results.");
+
+            return data;
         }
         catch (Exception ex)
         {
@@ -32,13 +38,46 @@ public static class CodexAPI
         }
     }
 
+    public static async Task<List<CodexPreset>> GetPresetUpdates(List<int> presetIds)
+    {
+        if (presetIds.Count == 0) throw new ArgumentException(nameof(presetIds));
+
+        try
+        {
+            var query = string.Join(",", presetIds);
+            var url = BaseUrl + EscapedPluginName + "/updates?query=" + query;
+            var response = await HttpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadFromJsonAsync<List<CodexPreset>>();
+
+            if (data == null || data.Count == 0) throw new WebException("API returned no results.");
+
+            return data;
+        }
+        catch (Exception ex)
+        {
+            Plugin.PluginLog.Error(ex.ToString());
+            throw;
+        }
+    }
+
+    public static async Task<List<CodexPreset>> GetPresetUpdates(List<IPreset> presets)
+    {
+        var presetIds = presets
+                        .Where(p => p.Metadata != null)
+                        .Select(p => p.Metadata!.Id)
+                        .ToList();
+
+        return await GetPresetUpdates(presetIds);
+    }
+
     public static void Dispose()
     {
         HttpClient.Dispose();
     }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 public class CodexPlugin
 {
     public required int Id { get; set; }
@@ -49,7 +88,6 @@ public class CodexPlugin
     public required List<CodexCategory> Categories { get; set; }
 }
 
-// ReSharper disable once ClassNeverInstantiated.Global
 public class CodexCategory
 {
     public required string Name { get; set; }

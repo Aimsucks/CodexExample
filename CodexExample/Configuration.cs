@@ -154,12 +154,6 @@ public class Configuration : IPluginConfiguration
     }
 }
 
-public class PresetMetadata
-{
-    public required int Id { get; set; }
-    public required int Version { get; set; }
-}
-
 /*
  * This preset class is included as an example of a class that another plugin might define. Its data is meaningless
  * outside the Name and Metadata parameters.
@@ -171,4 +165,22 @@ public class Preset
     public required string Name { get; set; }
     public string? StringData { get; set; }
     public int? IntData { get; set; }
+}
+
+/*
+ * In order to use the CodexLib submodule, the plugin will need to define a "Metadata" parameter containing an ID
+ * integer and a Version integer. It will also need an interface that the submodule can access when it's doing API
+ * requests for preset updates.
+ */
+
+public class PresetMetadata
+{
+    public required int Id { get; set; }
+    public required int Version { get; set; }
+}
+
+public interface IPreset
+{
+    public PresetMetadata? Metadata { get; set; }
+    public string Name { get; set; }
 }
