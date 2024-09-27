@@ -59,7 +59,12 @@ public static class CodexAPI
         }
     }
 
-    public static async Task<List<CodexPreset>> GetPresetUpdates<T>(List<T> presets) where T:IPreset
+    /*
+     * In order to use this submodule, you will need to implement the interface IPreset in your config file and
+     * assign it to your preset's class.
+     */
+
+    public static async Task<List<CodexPreset>> GetPresetUpdates<T>(List<T> presets) where T : IPreset
     {
         if (presets.Count == 0) throw new ArgumentException("At least one preset must be provided.");
 
