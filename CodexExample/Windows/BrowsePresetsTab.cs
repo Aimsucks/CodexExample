@@ -16,10 +16,8 @@ public static class BrowsePresetsTab
     {
         if (ImGui.BeginTable("##browseTable", 2, ImGuiTableFlags.BordersInnerV))
         {
-            // Set the first column width to 200 so it doesn't scale with the window
-            ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, 150);
+            ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, 175);
 
-            // The height parameter here is used to draw the border between the columns
             ImGui.TableNextRow(ImGuiTableRowFlags.None, ImGui.GetContentRegionAvail().Y - 2);
 
             // Left column
@@ -137,14 +135,14 @@ public static class BrowsePresetsTab
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                         if (ImGui.IsItemClicked())
                         {
+                            string message;
+                            StatusMessage.Status status;
+
                             /*
                              * The topLevelCategory variable here should not be used in a real plugin - this is one of
                              * a few different ways that this example can display the ability to import a preset to the
                              * plugin's configuration directly or add/update a preset to/in the plugin's preset list.
                              */
-
-                            string message;
-                            StatusMessage.Status status;
 
                             if (topLevelCategory == "Configuration Presets")
                             {
