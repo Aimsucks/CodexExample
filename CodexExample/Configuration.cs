@@ -168,6 +168,7 @@ public class Preset
 }
 
 /*
+ * IMPORTANT:
  * In order to use the CodexLib submodule, the plugin will need to define a "Metadata" parameter containing an ID
  * integer and a Version integer. It will also need an interface that the submodule can access when it's doing API
  * requests for preset updates.
