@@ -116,20 +116,7 @@ public static class BrowsePresetsTab
                     ImGui.SameLine();
 
                     // Import button
-                    // Boolean to determine if button should be colored green on hover
-                    var isColored = ImGui.GetStateStorage()
-                                         .GetBool(ImGui.GetID($"ImportButton##{preset.Id}"), false);
-
-                    using (ImRaii.PushColor(ImGuiCol.Text, 0xFF66AC87, isColored))
-                    using (ImRaii.PushFont(UiBuilder.IconFont))
-                    {
-                        ImGui.Text(FontAwesomeIcon.ArrowCircleDown.ToIconString());
-                    }
-
-                    ImGui.GetStateStorage()
-                         .SetBool(ImGui.GetID($"ImportButton##{preset.Id}"), ImGui.IsItemHovered());
-
-                    // Hover and click actions
+                    ClickableIcon.Draw(FontAwesomeIcon.ArrowCircleDown, 0xFF66AC87);
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
