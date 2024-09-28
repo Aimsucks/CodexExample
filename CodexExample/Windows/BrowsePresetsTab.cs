@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using CodexExample.Helpers;
@@ -10,7 +11,7 @@ namespace CodexExample.Windows;
 
 public static class BrowsePresetsTab
 {
-    public static Task<CodexPlugin?>? PresetsRequest;
+    public static Task<List<CodexCategory>?>? PresetsRequest;
     private static bool QueryState;
 
     private static Plugin? Plugin;
@@ -69,13 +70,12 @@ public static class BrowsePresetsTab
                 if (ImGui.IsItemClicked())
                 {
                     PresetsRequest = null;
-
                     StatusMessage.SetStatus("Querying API", StatusMessage.Status.Warning, 3000);
                 }
 
                 ImGui.Separator();
 
-                if (PresetsRequest?.Result?.Categories.Count > 0)
+                if (PresetsRequest?.Result?.Count > 0)
                 {
                     if (QueryState)
                     {
@@ -84,6 +84,7 @@ public static class BrowsePresetsTab
                     }
 
                     foreach (var category in PresetsRequest.Result.Categories)
+                    foreach (var category in PresetsRequest.Result)
                         DrawCategoryNode(category, category.Name);
                 }
                 else StatusMessage.SetStatus("No presets found", StatusMessage.Status.Warning, 3000);
@@ -95,8 +96,11 @@ public static class BrowsePresetsTab
                 var buttonSize = new Vector2(100, 50);
                 var originalPos = CenterCursor(buttonSize);
 
-                // Disable button while query is running
-                // Should be fast enough to be unnoticeable unless API is down
+                /*
+                 * The "Get Presets" button queries the Codex API for a list of all available presets. Codex returns a
+                 * CodexPlugin class which contains categories and presets related to the plugin that was queried.
+                 */
+
                 using (ImRaii.Disabled(PresetsRequest?.IsCompleted == false))
                 {
                     if (ImGui.Button("Get Presets", buttonSize))
@@ -106,7 +110,6 @@ public static class BrowsePresetsTab
                     }
                 }
 
-                // Reset the cursor so the tree of presets draws correctly
                 ImGui.SetCursorPos(originalPos);
 
                 if (PresetsRequest?.IsCompleted == false)
@@ -119,6 +122,13 @@ public static class BrowsePresetsTab
             ImGui.EndTable();
         }
     }
+
+    /*
+     * DrawCategoryNode() is a recursive function designed to draw categories and subcategories until no subcategories
+     * exist anymore. This also renders how the presets are displayed, as well as passes the "topLevelCategory"
+     * parameter which is used internally to determine if a preset is a "configuration preset" or a "modular preset",
+     * explained in Configuration.cs.
+     */
 
     private static void DrawCategoryNode(CodexCategory category, string topLevelCategory)
     {

@@ -16,15 +16,15 @@ public static class CodexAPI
     // Reusable HTTP client
     private static readonly HttpClient HttpClient = new();
 
-    public static async Task<CodexPlugin?> GetPresets()
+    public static async Task<List<CodexCategory>?> GetPresets()
     {
         try
         {
-            var url = BaseUrl + EscapedPluginName;
+            var url = BaseUrl + EscapedPluginName + "/presets";
             var response = await HttpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
-            var data = await response.Content.ReadFromJsonAsync<CodexPlugin>();
+            var data = await response.Content.ReadFromJsonAsync<List<CodexCategory>>();
 
             return data;
         }
@@ -80,16 +80,6 @@ public static class CodexAPI
     {
         HttpClient.Dispose();
     }
-}
-
-public class CodexPlugin
-{
-    public required int Id { get; set; }
-    public required string Name { get; set; }
-    public required string Description { get; set; }
-
-    // ReSharper disable once CollectionNeverUpdated.Global
-    public required List<CodexCategory> Categories { get; set; }
 }
 
 public class CodexCategory
