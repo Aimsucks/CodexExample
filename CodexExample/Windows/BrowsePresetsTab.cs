@@ -2,6 +2,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using CodexExample.Helpers;
 using Dalamud.Interface;
+using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 
@@ -35,7 +36,7 @@ public static class BrowsePresetsTab
 
             ImGui.Spacing();
 
-            using (ImRaii.PushColor(ImGuiCol.Text, 0xFF62DDD8))
+            using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudYellow))
             {
                 ImGui.TextWrapped($"Setting 1: {Plugin.Configuration.SettingOne}");
                 ImGui.TextWrapped($"Setting 2: {Plugin.Configuration.SettingTwo}");
@@ -50,11 +51,11 @@ public static class BrowsePresetsTab
 
             if (PresetsRequest != null && PresetsRequest.IsCompletedSuccessfully)
             {
-                // var availableWidth = ImGui.GetContentRegionAvail().X;
-                // var iconWidth = ImGui.CalcTextSize(FontAwesomeIcon.Sync.ToIconString()).X +
-                //                 (ImGui.GetStyle().ItemSpacing.X * 2);
-                //
-                // ImGui.SameLine(availableWidth - iconWidth);
+                var availableWidth = ImGui.GetContentRegionAvail().X;
+                var iconWidth = ImGui.CalcTextSize(FontAwesomeIcon.Sync.ToIconString()).X +
+                                (ImGui.GetStyle().ItemSpacing.X * 2);
+
+                ImGui.SameLine(availableWidth - iconWidth);
 
                 /*
                  * The Update button queries the Codex API for a list of all available presets. Later, this
@@ -64,18 +65,17 @@ public static class BrowsePresetsTab
                  * TODO: Fix Get Presets button interaction with StatusMessage so this can be uncommented.
                  */
 
-                // ClickableIcon.Draw(FontAwesomeIcon.Sync, ImGuiColors.ParsedBlue);
-                // if (ImGui.IsItemClicked())
-                // {
-                //     PresetsRequest = CodexAPI.GetPresets();
-                //     QueryState = true;
-                //
-                //     StatusMessage.SetStatus("Querying API", StatusMessage.Status.Warning, 3000);
-                // }
+                ClickableIcon.Draw(FontAwesomeIcon.Undo, ImGuiColors.DPSRed);
+                if (ImGui.IsItemClicked())
+                {
+                    PresetsRequest = null;
+
+                    StatusMessage.SetStatus("Querying API", StatusMessage.Status.Warning, 3000);
+                }
 
                 ImGui.Separator();
 
-                if (PresetsRequest.Result?.Categories.Count > 0)
+                if (PresetsRequest?.Result?.Categories.Count > 0)
                 {
                     if (QueryState)
                     {
@@ -140,7 +140,8 @@ public static class BrowsePresetsTab
                     ImGui.SameLine();
 
                     // Import button
-                    ClickableIcon.Draw(FontAwesomeIcon.ArrowCircleDown, 0xFF66AC87, preset.Name + preset.Id);
+                    ClickableIcon.Draw(FontAwesomeIcon.ArrowCircleDown, ImGuiColors.HealerGreen,
+                                       preset.Name + preset.Id);
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
@@ -158,7 +159,7 @@ public static class BrowsePresetsTab
                             if (topLevelCategory == "Configuration Presets")
                             {
                                 (message, status) =
-                                    Plugin.Configuration.ImportConfiguration(Plugin, preset) switch
+                                    Plugin?.Configuration.ImportConfiguration(Plugin, preset) switch
                                     {
                                         Configuration.PresetImportStatus.Success => ("Config imported",
                                                     StatusMessage.Status.Success),
@@ -169,7 +170,7 @@ public static class BrowsePresetsTab
 
                             else if (topLevelCategory == "Plugin Presets")
                             {
-                                (message, status) = Plugin.Configuration.ImportPreset(preset) switch
+                                (message, status) = Plugin?.Configuration.ImportPreset(preset) switch
                                 {
                                     Configuration.PresetImportStatus.Success =>
                                         ("Preset imported", StatusMessage.Status.Success),
