@@ -16,7 +16,6 @@ public class MainWindow : Window, IDisposable
 
     private readonly string IconImagePath;
 
-    // ReSharper disable once NotAccessedField.Local
     private readonly Plugin Plugin;
 
     public MainWindow(Plugin plugin, string iconImagePath)
@@ -91,7 +90,7 @@ public class MainWindow : Window, IDisposable
             ImGui.SetNextItemWidth((windowWidth / 2) - 4);
             if (ImGui.BeginTabItem("Browse Presets"))
             {
-                BrowsePresetsTab.Draw();
+                BrowsePresetsTab.Draw(Plugin);
                 InstalledPresetsTab.PresetUpdatesRequest = null;
                 ImGui.EndTabItem();
             }
@@ -99,7 +98,7 @@ public class MainWindow : Window, IDisposable
             ImGui.SetNextItemWidth(windowWidth / 2);
             if (ImGui.BeginTabItem("Installed Presets"))
             {
-                InstalledPresetsTab.Draw();
+                InstalledPresetsTab.Draw(Plugin);
                 BrowsePresetsTab.PresetsRequest = null;
                 ImGui.EndTabItem();
             }

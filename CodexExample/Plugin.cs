@@ -17,8 +17,6 @@ public sealed class Plugin : IDalamudPlugin
 
     public Plugin()
     {
-        CodexExample = this;
-
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         var iconImagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "icon.png");
@@ -48,8 +46,6 @@ public sealed class Plugin : IDalamudPlugin
 
     [PluginService]
     internal static IPluginLog PluginLog { get; private set; } = null!;
-
-    internal static Plugin CodexExample { get; private set; } = null!;
 
     public Configuration Configuration { get; set; }
     private MainWindow MainWindow { get; init; }

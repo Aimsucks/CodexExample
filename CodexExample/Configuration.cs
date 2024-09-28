@@ -55,8 +55,25 @@ public class Configuration : IPluginConfiguration
 
     public void Reset()
     {
-        Plugin.CodexExample.Configuration = new Configuration();
-        Plugin.CodexExample.Configuration.Save();
+        SettingOne = true;
+        SettingTwo = 30;
+
+        Presets =
+        [
+            new Preset
+            {
+                Name = "Mod. Preset",
+                StringData = "String Data 3",
+                IntData = 30,
+                Metadata = new PresetMetadata
+                {
+                    Id = 6,
+                    Version = 1
+                }
+            }
+        ];
+
+        Save();
     }
 
     /*
@@ -66,11 +83,11 @@ public class Configuration : IPluginConfiguration
      * Updating these should immediately update how the plugin functions.
      */
 
-    internal PresetImportStatus ImportConfiguration(CodexPreset preset)
+    internal PresetImportStatus ImportConfiguration(Plugin plugin, CodexPreset preset)
     {
         Plugin.PluginLog.Debug($"Importing configuration preset \"{preset.Name}\" (v{preset.Version})");
 
-        var previousConfig = Plugin.CodexExample.Configuration;
+        var previousConfig = plugin.Configuration;
         var updatedConfig = JsonConvert.DeserializeObject<Configuration>(preset.Data);
 
         if (updatedConfig == null) return PresetImportStatus.Failure;
@@ -84,8 +101,8 @@ public class Configuration : IPluginConfiguration
         updatedConfig.Version = previousConfig.Version;
         updatedConfig.Presets = previousConfig.Presets;
 
-        Plugin.CodexExample.Configuration = updatedConfig;
-        Plugin.CodexExample.Configuration.Save();
+        plugin.Configuration = updatedConfig;
+        Save();
 
         return PresetImportStatus.Success;
     }

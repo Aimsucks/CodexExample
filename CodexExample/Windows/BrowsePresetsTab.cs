@@ -12,8 +12,12 @@ public static class BrowsePresetsTab
     public static Task<CodexPlugin?>? PresetsRequest;
     private static bool QueryState;
 
-    public static void Draw()
+    private static Plugin Plugin;
+
+    public static void Draw(Plugin plugin)
     {
+        Plugin = plugin;
+
         if (ImGui.BeginTable("##browseTable", 2, ImGuiTableFlags.BordersInnerV))
         {
             ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, 175);
@@ -33,8 +37,8 @@ public static class BrowsePresetsTab
 
             using (ImRaii.PushColor(ImGuiCol.Text, 0xFF62DDD8))
             {
-                ImGui.TextWrapped($"Setting 1: {Plugin.CodexExample.Configuration.SettingOne}");
-                ImGui.TextWrapped($"Setting 2: {Plugin.CodexExample.Configuration.SettingTwo}");
+                ImGui.TextWrapped($"Setting 1: {Plugin.Configuration.SettingOne}");
+                ImGui.TextWrapped($"Setting 2: {Plugin.Configuration.SettingTwo}");
             }
 
             // Right column with the presets themselves
@@ -124,11 +128,6 @@ public static class BrowsePresetsTab
             {
                 foreach (var preset in category.Presets)
                 {
-                    // Leaving this here for now as an alternative - creates a "clickable" tree leaf without a bullet
-                    // Could do tooltip on hover and right click -> import instead of the two buttons
-                    // ImGui.TreeNodeEx($"{preset.Name} (v{preset.Version.ToString()})",
-                    //                  ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.NoTreePushOnOpen);
-
                     ImGui.BulletText($"{preset.Name} (v{preset.Version.ToString()})");
 
                     // Preset description icon and tooltip
@@ -159,7 +158,7 @@ public static class BrowsePresetsTab
                             if (topLevelCategory == "Configuration Presets")
                             {
                                 (message, status) =
-                                    Plugin.CodexExample.Configuration.ImportConfiguration(preset) switch
+                                    Plugin.Configuration.ImportConfiguration(Plugin, preset) switch
                                     {
                                         Configuration.PresetImportStatus.Success => ("Config imported",
                                                     StatusMessage.Status.Success),
@@ -170,7 +169,7 @@ public static class BrowsePresetsTab
 
                             else if (topLevelCategory == "Plugin Presets")
                             {
-                                (message, status) = Plugin.CodexExample.Configuration.ImportPreset(preset) switch
+                                (message, status) = Plugin.Configuration.ImportPreset(preset) switch
                                 {
                                     Configuration.PresetImportStatus.Success =>
                                         ("Preset imported", StatusMessage.Status.Success),

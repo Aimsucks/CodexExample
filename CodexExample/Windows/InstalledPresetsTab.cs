@@ -15,8 +15,12 @@ public static class InstalledPresetsTab
     private static bool PresetJustUpdated;
     private static bool IdleState;
 
-    public static void Draw()
+    private static Plugin Plugin;
+
+    public static void Draw(Plugin plugin)
     {
+        Plugin = plugin;
+
         if (ImGui.BeginTable("##installedTable", 2, ImGuiTableFlags.BordersInnerV))
         {
             ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, 175);
@@ -58,7 +62,7 @@ public static class InstalledPresetsTab
             ClickableIcon.Draw(FontAwesomeIcon.Undo, ImGuiColors.DPSRed);
             if (ImGui.IsItemClicked())
             {
-                Plugin.CodexExample.Configuration.Reset();
+                Plugin.Configuration.Reset();
                 PresetUpdatesRequest = null;
                 PresetJustUpdated = false;
 
@@ -78,7 +82,7 @@ public static class InstalledPresetsTab
             {
                 if (PresetUpdatesRequest != null && PresetUpdatesRequest.IsCompletedSuccessfully)
                     PresetUpdatesRequest = null;
-                PresetUpdatesRequest = CodexAPI.GetPresetUpdates(Plugin.CodexExample.Configuration.Presets);
+                PresetUpdatesRequest = CodexAPI.GetPresetUpdates(Plugin.Configuration.Presets);
                 QueryState = true;
                 IdleState = false;
                 PresetJustUpdated = false;
@@ -103,7 +107,7 @@ public static class InstalledPresetsTab
                 }
 
                 // Compare the two lists and return true if any presets are outdated
-                var anyOutdatedPresets = Plugin.CodexExample.Configuration.Presets.Any(
+                var anyOutdatedPresets = Plugin.Configuration.Presets.Any(
                     preset => preset.Metadata != null && PresetUpdatesRequest.Result.Any(
                                   codexPreset =>
                                       codexPreset.Id == preset.Metadata.Id &&
@@ -129,7 +133,7 @@ public static class InstalledPresetsTab
              * for presets.
              */
 
-            foreach (var preset in Plugin.CodexExample.Configuration.Presets)
+            foreach (var preset in Plugin.Configuration.Presets)
             {
                 var presetUpdatesResult =
                     PresetUpdatesRequest != null && PresetUpdatesRequest.IsCompletedSuccessfully
@@ -146,7 +150,7 @@ public static class InstalledPresetsTab
                 if (ImGui.TreeNode($"{presetNameString}{presetUpdateString}##{presetIdString("tree")}"))
                 {
                     /*
-                     * Moving the execution of Plugin.CodexExample.Configuration.ImportPreset() to the outside of
+                     * Moving the execution of Plugin.Configuration.ImportPreset() to the outside of
                      * the foreach() loop prevents throwing an InvalidOperationException by modifying the list while
                      * iterating through it.
                      */
@@ -160,7 +164,7 @@ public static class InstalledPresetsTab
                             StatusMessage.Status status;
 
                             (message, status) =
-                                Plugin.CodexExample.Configuration.ImportPreset(presetUpdatesResult) switch
+                                Plugin.Configuration.ImportPreset(presetUpdatesResult) switch
                                 {
                                     Configuration.PresetImportStatus.Success =>
                                         ("Preset imported", StatusMessage.Status.Success),
