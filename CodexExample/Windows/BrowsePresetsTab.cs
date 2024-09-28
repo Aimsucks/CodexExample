@@ -229,10 +229,4 @@ public static class BrowsePresetsTab
 
         return originalPos;
     }
-
-    // This is currently unused but left as an example. The status text was moved to the "status" area at the top.
-    internal static Vector2 CenterCursor(string input, int verticalPadding = 0)
-    {
-        return CenterCursor(ImGui.CalcTextSize(input), verticalPadding);
-    }
 }
