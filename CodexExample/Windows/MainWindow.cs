@@ -11,10 +11,10 @@ public class MainWindow : Window, IDisposable
     private readonly IFontHandle HeaderFont = Plugin.PluginInterface.UiBuilder.FontAtlas.NewDelegateFontHandle(
         e => e.OnPreBuild(t => t.AddDalamudDefaultFont(20)));
 
+    private readonly int HeaderIconWidth = 100;
     private readonly int HeaderPadding = 20;
-    private readonly string IconImagePath;
 
-    private readonly int IconWidth = 100;
+    private readonly string IconImagePath;
 
     // ReSharper disable once NotAccessedField.Local
     private readonly Plugin Plugin;
@@ -40,12 +40,15 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
-        // Header
+        /*
+         * Header section of the plugin. Contains the plugin icon and a description about it.
+         */
+
         ImGui.Separator();
 
         if (ImGui.BeginTable("##headerTable", 2))
         {
-            ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, IconWidth + HeaderPadding);
+            ImGui.TableSetupColumn("one", ImGuiTableColumnFlags.WidthFixed, HeaderIconWidth + HeaderPadding);
             ImGui.TableNextRow();
 
             // Icon column
@@ -53,7 +56,7 @@ public class MainWindow : Window, IDisposable
 
             ImGui.SetCursorPosX(ImGui.GetCursorPosX() + (HeaderPadding / 2f));
             var iconImage = Plugin.TextureProvider.GetFromFile(IconImagePath).GetWrapOrDefault();
-            if (iconImage != null) ImGui.Image(iconImage.ImGuiHandle, new Vector2(IconWidth, IconWidth));
+            if (iconImage != null) ImGui.Image(iconImage.ImGuiHandle, new Vector2(HeaderIconWidth, HeaderIconWidth));
 
             // Text column
             ImGui.TableNextColumn();
@@ -76,7 +79,10 @@ public class MainWindow : Window, IDisposable
 
         ImGui.Separator();
 
-        // Body
+        /*
+         * Body section of the plugin. Contains 2 tabs, each with a table containing 2 columns.
+         */
+
         if (ImGui.BeginTabBar("##tabBar", ImGuiTabBarFlags.NoTooltip))
         {
             // Set tab width to half of the window so they scale appropriately
