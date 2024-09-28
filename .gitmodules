@@ -1,0 +1,3 @@
+[submodule "CodexLib"]
+	path = CodexLib
+	url = https://github.com/Aimsucks/CodexLib.git
