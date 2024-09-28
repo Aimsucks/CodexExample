@@ -15,7 +15,7 @@ public static class InstalledPresetsTab
     private static bool PresetJustUpdated;
     private static bool IdleState;
 
-    private static Plugin Plugin;
+    private static Plugin? Plugin;
 
     public static void Draw(Plugin plugin)
     {

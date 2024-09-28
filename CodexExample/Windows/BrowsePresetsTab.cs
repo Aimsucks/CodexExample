@@ -12,7 +12,7 @@ public static class BrowsePresetsTab
     public static Task<CodexPlugin?>? PresetsRequest;
     private static bool QueryState;
 
-    private static Plugin Plugin;
+    private static Plugin? Plugin;
 
     public static void Draw(Plugin plugin)
     {
