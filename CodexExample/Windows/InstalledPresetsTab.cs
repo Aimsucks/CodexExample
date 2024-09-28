@@ -113,11 +113,11 @@ public static class InstalledPresetsTab
                                       codexPreset.Id == preset.Metadata.Id &&
                                       preset.Metadata.Version < codexPreset.Version));
 
-                if (anyOutdatedPresets)
-                    StatusMessage.SetStatus("Updates found", StatusMessage.Status.Success, 3000);
-                else if (!IdleState)
+                if (!IdleState)
                 {
-                    StatusMessage.SetStatus("No updates found", StatusMessage.Status.Warning, 3000);
+                    if (anyOutdatedPresets)
+                        StatusMessage.SetStatus("Updates found", StatusMessage.Status.Success, 3000);
+
                     IdleState = true;
                 }
             }

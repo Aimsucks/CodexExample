@@ -91,7 +91,7 @@ public class MainWindow : Window, IDisposable
             if (ImGui.BeginTabItem("Browse Presets"))
             {
                 BrowsePresetsTab.Draw(Plugin);
-                InstalledPresetsTab.PresetUpdatesRequest = null;
+                // InstalledPresetsTab.PresetUpdatesRequest = null;
                 ImGui.EndTabItem();
             }
 
@@ -99,7 +99,7 @@ public class MainWindow : Window, IDisposable
             if (ImGui.BeginTabItem("Installed Presets"))
             {
                 InstalledPresetsTab.Draw(Plugin);
-                BrowsePresetsTab.PresetsRequest = null;
+                // BrowsePresetsTab.PresetsRequest = null;
                 ImGui.EndTabItem();
             }
 
