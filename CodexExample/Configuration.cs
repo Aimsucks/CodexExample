@@ -9,6 +9,11 @@ namespace CodexExample;
 [Serializable]
 public class Configuration : IPluginConfiguration
 {
+    /*
+     * This enum was created to send data to "react" to messages depending on if they were imported, updated, etc. This
+     * data is then used to call StatusMessage.cs and draw a status message so the end user knows what just happened.
+     */
+
     public enum PresetImportStatus
     {
         Success,
@@ -19,6 +24,11 @@ public class Configuration : IPluginConfiguration
 
     public bool SettingOne { get; set; } = true;
     public int SettingTwo { get; set; } = 30;
+
+    /*
+     * A pre-existing preset was added so you can observe the update behavior. In the API, this preset already exists,
+     * but its version is 2 instead of 1. When you check for updates, it will return as a preset that can be updated.
+     */
 
     [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
     public List<Preset> Presets { get; set; } =
@@ -38,17 +48,6 @@ public class Configuration : IPluginConfiguration
 
     public int Version { get; set; }
 
-    /*
-     * Helper Functions
-     * ImportConfiguration brings in a preset from the Codex API that overwrites raw plugin configuration values.
-     * Plugins might use this to allow users to share visual or functional configurations between each other.
-     *
-     * ImportPreset brings in a preset from the Codex API that adds or updates individual items in a "Presets" list in
-     * the plugin configuration. This is especially useful if the plugin's functionality can be expanded by importing
-     * presets others have created, i.e. waymarks or list filters. These are generally referred to as "Modules" in
-     * Codex.
-     */
-
     public void Save()
     {
         Plugin.PluginInterface.SavePluginConfig(this);
@@ -61,9 +60,10 @@ public class Configuration : IPluginConfiguration
     }
 
     /*
-     * Configuration Presets
-     * These are presets that cover the plugin's settings itself. Updating these will immediately update how the
-     * plugin functions.
+     * ImportConfiguration brings in a preset from the Codex API that overwrites raw plugin configuration values.
+     * Plugins might use this to allow users to share visual or functional configurations between each other.
+     * These are called "configuration presets" in the example and are presets that cover the plugin's settings itself.
+     * Updating these should immediately update how the plugin functions.
      */
 
     internal PresetImportStatus ImportConfiguration(CodexPreset preset)
@@ -91,17 +91,23 @@ public class Configuration : IPluginConfiguration
     }
 
     /*
-     * Module Presets
-     * The word "module" refers to anything that isn't baked into the actual functionality of the plugin and will add
-     * functionality to it by including it as a preset. A good example of this would be filters in Allagan Tools. The
-     * configurations that are imported are supplementary to the plugin's configuration.
+     * ImportPreset brings in a preset from the Codex API that adds or updates individual items in a "Presets" list in
+     * the plugin configuration. This is especially useful if the plugin's functionality can be expanded by importing
+     * presets others have created, i.e. waymarks or list filters. These are generally referred to as "modular presets"
+     * or "plugin presets" in Codex.
      *
-     * In these presets, you will need to add a "metadata" object with the following parameters:
+     * The word "modular" refers to anything that isn't baked into the actual functionality of the plugin and will add
+     * functionality to it by including it as a preset. A good example of this would be filters in Allagan Tools. The
+     * configurations that are imported are supplementary to the plugin's configuration itself.
+     *
+     * For these presets, you will need to add a "metadata" object with the following parameters:
      * - An "id" integer to identify the preset in the API
      * - A "version" integer to provide updates to the preset when comparing it to the API version of that preset
      *
-     * Anything pre-existing is fine and will be contained in the "data" string attribute of the preset coming from
-     * Codex's API.
+     * This will be explained in further detail below where the PluginMetadata class is defined. Additionally, anything
+     * pre-existing is fine and will be contained in the "data" string attribute of the preset coming from
+     * Codex's API. You will have to bake functionality into your plugin to check if any presets contain the required
+     * metadata and handle "old" presets appropriately.
      */
 
     internal PresetImportStatus ImportPreset(CodexPreset preset)
@@ -128,7 +134,7 @@ public class Configuration : IPluginConfiguration
 
         /*
          * Searching the existing presets for the current one and checking the versions will allow us to let the
-         * user know it's going to be updated instead of imported or prevent the user from importing an existing
+         * user know it's going to be updated instead of imported, or prevent the user from importing an existing
          * preset.
          */
 
@@ -169,7 +175,8 @@ public class Configuration : IPluginConfiguration
 
 /*
  * This preset class is included as an example of a class that another plugin might define. Its data is meaningless
- * outside the Name and Metadata parameters.
+ * outside the Name and Metadata parameters. To support preset updates, it needs to implement the IPreset interface
+ * to make sure CodexLib can properly pull out the metadata and name of the preset.
  */
 
 public class Preset : IPreset
@@ -181,10 +188,10 @@ public class Preset : IPreset
 }
 
 /*
- * IMPORTANT:
  * In order to use the CodexLib submodule, the plugin will need to define a "Metadata" parameter containing an ID
- * integer and a Version integer. It will also need an interface that the submodule can access when it's doing API
- * requests for preset updates.
+ * integer and a Version integer. This information is used when querying the Codex API to make sure the correct
+ * presets are being pulled from the database as well as to tell if any presets need to be updated when compared to
+ * the list returned from the API.
  */
 
 public class PresetMetadata
@@ -192,6 +199,11 @@ public class PresetMetadata
     public required int Id { get; set; }
     public required int Version { get; set; }
 }
+
+/*
+ * Additionally, the plugin needs to add and implement the IPreset interface so CodexLib can pull the name and
+ * metadata properties from the plugin's existing presets.
+ */
 
 public interface IPreset
 {
