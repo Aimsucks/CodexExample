@@ -38,7 +38,7 @@ public static class InstalledPresetsTab
 
             ImGui.TextWrapped("Open the preset and click \"Update\" to import the update.");
 
-            // Right column with the presets themselves
+            // Right column with presets
             ImGui.TableNextColumn();
 
             ImGui.Text("Status:");

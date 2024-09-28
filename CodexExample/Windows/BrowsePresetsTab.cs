@@ -37,13 +37,14 @@ public static class BrowsePresetsTab
 
             ImGui.Spacing();
 
+            // "Live" settings displayed to show how importing plugin configuration presets works
             using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudYellow))
             {
                 ImGui.TextWrapped($"Setting 1: {Plugin.Configuration.SettingOne}");
                 ImGui.TextWrapped($"Setting 2: {Plugin.Configuration.SettingTwo}");
             }
 
-            // Right column with the presets themselves
+            // Right column with presets
             ImGui.TableNextColumn();
 
             ImGui.Text("Status:");
@@ -59,11 +60,8 @@ public static class BrowsePresetsTab
                 ImGui.SameLine(availableWidth - iconWidth);
 
                 /*
-                 * The Update button queries the Codex API for a list of all available presets. Later, this
-                 * functionality will be expanded to only show presets not currently installed by checking the
-                 * Preset.Metadata.Id and comparing it to the list received.
-                 *
-                 * TODO: Fix Get Presets button interaction with StatusMessage so this can be uncommented.
+                 * The reset button allows you to query the API again. This functionality can be moved to an "update"
+                 * button instead, but it was easier to implement a reset button.
                  */
 
                 ClickableIcon.Draw(FontAwesomeIcon.Undo, ImGuiColors.DPSRed);
@@ -83,7 +81,11 @@ public static class BrowsePresetsTab
                         QueryState = false;
                     }
 
-                    foreach (var category in PresetsRequest.Result.Categories)
+                    /*
+                     * This is how all the presets are displayed. DrawCategoryNode() is a recursive function explained
+                     * below that will draw categories and subcategories.
+                     */
+
                     foreach (var category in PresetsRequest.Result)
                         DrawCategoryNode(category, category.Name);
                 }
@@ -140,7 +142,11 @@ public static class BrowsePresetsTab
                 {
                     ImGui.BulletText($"{preset.Name} (v{preset.Version.ToString()})");
 
-                    // Preset description icon and tooltip
+                    /*
+                     * If a preset contains a Description parameter, it can be displayed underneath the preset. When
+                     * dealing with a lot of presets, it might be better to show descriptions on hover or right click.
+                     */
+
                     if (preset.Description != null)
                     {
                         ImGui.SameLine();
@@ -149,7 +155,13 @@ public static class BrowsePresetsTab
 
                     ImGui.SameLine();
 
-                    // Import button
+                    /*
+                     * The import button here is an example of what a plugin can do to import the preset. This probably
+                     * isn't the best implementation, but it's here to show what can be done. Since the plugin has
+                     * the preset data, importing it can be handled in whatever way the author deems fit. There is some
+                     * extra code below to handle the difference between configuration presets and modular/plugin presets.
+                     */
+
                     ClickableIcon.Draw(FontAwesomeIcon.ArrowCircleDown, ImGuiColors.HealerGreen,
                                        preset.Name + preset.Id);
                     if (ImGui.IsItemHovered())

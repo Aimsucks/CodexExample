@@ -4,7 +4,16 @@ using Dalamud.Interface.Utility.Raii;
 
 namespace CodexExample.Helpers;
 
-public class ClickableIcon
+/*
+ * Because clickable icons aren't implemented in Dalamud, a function had to be made to avoid using ugly buttons. Calling
+ * ClickableIcon() draws a FontAwesomeIcon that changes colors on hover and, when followed by ImGui.IsItemClicked(),
+ * will call an action when the icon is clicked.
+ *
+ * Since this is an example plugin, it was included as a way to assist in providing users a way to interact with the
+ * return of the Codex API. None of this is required to interact with the Codex API.
+ */
+
+public static class ClickableIcon
 {
     public static void Draw(FontAwesomeIcon icon, Vector4 color, string extraId = "")
     {

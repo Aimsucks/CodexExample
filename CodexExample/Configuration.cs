@@ -77,7 +77,7 @@ public class Configuration : IPluginConfiguration
     }
 
     /*
-     * ImportConfiguration brings in a preset from the Codex API that overwrites raw plugin configuration values.
+     * ImportConfiguration() brings in a preset from the Codex API that overwrites raw plugin configuration values.
      * Plugins might use this to allow users to share visual or functional configurations between each other.
      * These are called "configuration presets" in the example and are presets that cover the plugin's settings itself.
      * Updating these should immediately update how the plugin functions.
@@ -108,7 +108,7 @@ public class Configuration : IPluginConfiguration
     }
 
     /*
-     * ImportPreset brings in a preset from the Codex API that adds or updates individual items in a "Presets" list in
+     * ImportPreset() brings in a preset from the Codex API that adds or updates individual items in a "Presets" list in
      * the plugin configuration. This is especially useful if the plugin's functionality can be expanded by importing
      * presets others have created, i.e. waymarks or list filters. These are generally referred to as "modular presets"
      * or "plugin presets" in Codex.
