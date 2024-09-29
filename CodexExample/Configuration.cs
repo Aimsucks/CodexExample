@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CodexExample.Helpers;
+using CodexLib;
 using Dalamud.Configuration;
 using Newtonsoft.Json;
 
@@ -202,28 +202,4 @@ public class Preset : IPreset
     public int? IntData { get; set; }
     public PresetMetadata? Metadata { get; set; }
     public required string Name { get; set; }
-}
-
-/*
- * In order to use the CodexLib submodule, the plugin will need to define a "Metadata" parameter containing an ID
- * integer and a Version integer. This information is used when querying the Codex API to make sure the correct
- * presets are being pulled from the database as well as to tell if any presets need to be updated when compared to
- * the list returned from the API.
- */
-
-public class PresetMetadata
-{
-    public required int Id { get; set; }
-    public required int Version { get; set; }
-}
-
-/*
- * Additionally, the plugin needs to add and implement the IPreset interface so CodexLib can pull the name and
- * metadata properties from the plugin's existing presets.
- */
-
-public interface IPreset
-{
-    public PresetMetadata? Metadata { get; set; }
-    public string Name { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿global using ImGuiNET;
 using System.IO;
-using CodexExample.Helpers;
 using CodexExample.Windows;
+using CodexLib;
 using Dalamud.Game.Command;
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
@@ -33,6 +33,12 @@ public sealed class Plugin : IDalamudPlugin
         PluginInterface.UiBuilder.Draw += DrawUI;
 
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
+
+        /*
+         * Initialize Codex with the PluginInterface so Codex can send messages to the plugin's log.
+         */
+
+        Codex.Initialize(PluginInterface, "Codex Example");
     }
 
     [PluginService]
@@ -55,7 +61,7 @@ public sealed class Plugin : IDalamudPlugin
         WindowSystem.RemoveAllWindows();
         MainWindow.Dispose();
         CommandManager.RemoveHandler(CommandName);
-        CodexAPI.Dispose();
+        Codex.Dispose();
     }
 
     private void OnCommand(string command, string args)

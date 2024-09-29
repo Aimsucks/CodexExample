@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CodexExample.Helpers;
+using CodexLib;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 
