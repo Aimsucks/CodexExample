@@ -46,7 +46,7 @@ public class Configuration : IPluginConfiguration
         }
     ];
 
-    public int Version { get; set; }
+    public int Version { get; set; } = 1;
 
     public void Save()
     {

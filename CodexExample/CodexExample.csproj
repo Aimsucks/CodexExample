@@ -3,7 +3,7 @@
     <Import Project="Dalamud.Plugin.Bootstrap.targets"/>
 
     <PropertyGroup>
-        <Version>0.1</Version>
+        <Version>1.0.0.0</Version>
         <Description>Providing an example of interacting with a repository of presets for FFXIV plugins.</Description>
         <PackageProjectUrl>https://github.com/aimsucks/CodexExample</PackageProjectUrl>
         <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
