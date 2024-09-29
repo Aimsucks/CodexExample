@@ -136,10 +136,12 @@ public static class InstalledPresetsTab
 
             foreach (var preset in Plugin.Configuration.Presets)
             {
-                var presetUpdatesResult =
-                    PresetUpdatesRequest != null && PresetUpdatesRequest.IsCompletedSuccessfully
-                        ? PresetUpdatesRequest.Result.First(p => p.Id == preset.Metadata?.Id)
-                        : null;
+                CodexPreset? presetUpdatesResult = null!;
+
+                if (PresetUpdatesRequest != null
+                    && PresetUpdatesRequest.IsCompletedSuccessfully
+                    && preset.Metadata?.Id != null)
+                    presetUpdatesResult = PresetUpdatesRequest.Result.FirstOrDefault(p => p.Id == preset.Metadata?.Id);
 
                 var presetCanBeUpdated = presetUpdatesResult?.Version > preset.Metadata?.Version;
 
